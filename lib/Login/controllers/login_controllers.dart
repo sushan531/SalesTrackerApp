@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tipot/home/screens/add_branch.dart';
-import 'package:tipot/home/screens/home_page.dart';
+
 import 'package:tipot/index.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,6 +32,7 @@ class LoginControllers extends GetxController {
       var token = json['token'];
       final SharedPreferences? prefs = await _prefs;
       await prefs?.setString('token', token);
+      print(token);
 
       print("Login Successful");
 
@@ -47,7 +48,7 @@ class LoginControllers extends GetxController {
   }
 
   Future<bool> isValidToken(String? loggedInToken) async {
-    //Retrieve the stored token from locl storage
+    //Retrieve the stored token from local storage
     final SharedPreferences? prefs = await _prefs;
     String? storedToken = prefs?.getString('token');
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tipot/home/screens/add_page.dart';
+import 'package:tipot/home/screens/add_branch.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -43,7 +43,7 @@ void showChoices(BuildContext context) {
               title: Text('Option 1'),
               onTap: () {
                 Navigator.of(context)
-                    .push(MaterialPageRoute(builder: ((context) => AddPage())));
+                    .push(MaterialPageRoute(builder: ((context) => AddBranch())));
               },
             ),
             ListTile(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tipot/home/screens/add_branch.dart';
 import 'package:tipot/home/screens/splashscreen.dart';
 import 'package:tipot/index.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(),
-      home: const SplashScreen(),
+      home:  const SplashScreen(),
     );
   }
 }
+

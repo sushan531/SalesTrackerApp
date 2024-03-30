@@ -1,10 +1,11 @@
 enum TextFieldType {
   isName,
   isEmail,
-  isnewpassword,
+  ispassword,
   isconfirmpassword,
   isnumber,
   isorganizationid,
+  isbranchname
 }
 
 enum ContainerType {

@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tipot/Login/index.dart';
 
-import 'package:tipot/Login/widgets/custom_textfield_widget.dart';
 
-class SignUpPage extends StatelessWidget {
-  SignUpPage({super.key});
 
+class SignUpPage extends StatefulWidget {
+   const SignUpPage({super.key,
+
+  });
+
+
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
   SignupControllers signupcontroller = Get.put(SignupControllers());
 
   @override
@@ -26,7 +34,7 @@ class SignUpPage extends StatelessWidget {
             ),
             CustomtextField(
               textController: signupcontroller.passwordcontroller,
-              textfieldtype: TextFieldType.isnewpassword,
+              textfieldtype: TextFieldType.ispassword,
               icon: Icons.password_outlined,
             ),
             CustomtextField(
@@ -34,15 +42,18 @@ class SignUpPage extends StatelessWidget {
               textfieldtype: TextFieldType.isorganizationid,
               icon: Icons.local_post_office_outlined,
             ),
-            SizedBox(
+
+            //
+
+            const SizedBox(
               height: 20,
             ),
             Container(
               width: 200,
-              margin: EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 20),
               child: RichText(
                 textAlign: TextAlign.center,
-                  text: TextSpan(
+                  text: const TextSpan(
                 text:"By pressing 'Submit' you agree to our",
                 style: TextStyle(color: Color(0xFFc2dfda),
                 fontSize: 12),

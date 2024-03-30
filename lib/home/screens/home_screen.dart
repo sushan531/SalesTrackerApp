@@ -1,25 +1,53 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:math' as math;
+import 'package:tipot/Login/index.dart';
 
-import 'package:tipot/index.dart';
+
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+   HomeScreen({super.key,
+
+  });
+
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //bool isLoginScreen = false;
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  SignupControllers signupcontroller = Get.put(SignupControllers());
   bool isSignupScreen = false;
+  Future messageDialog() =>showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Branch Name"),
+        content: TextField(
+
+
+        ),
+        actions: [
+          TextButton(
+            child: Text("Add"),
+            onPressed: ()=>Get.find<BranchControllers>().addBranchName(),)
+
+
+        ],
+
+      ));
+
+
+  void initState() {
+    super.initState();
+    _formKey = GlobalKey<FormState>(); // Initialize _formKey here
+  }
 
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    print("gh");
     return Scaffold(
       backgroundColor: Color(0xFFF2FEFB),
       body: Stack(children: [
@@ -31,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 300,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("image/bg.jpeg"),
+                image: AssetImage("image/bg.jpg"),
                 fit: BoxFit.fill,
               )
             ),
@@ -125,7 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
 
                       GestureDetector(
-                        onTap: () {
+                        onTap: (
+
+                            ) {
                           setState(() {
                             isSignupScreen = true;
                           });
@@ -162,22 +192,69 @@ class _HomeScreenState extends State<HomeScreen> {
 
               ),
         )),
+        if(isSignupScreen)
         Positioned(
           top: 535,
             right: 0,
             left: 0,
             child: Center(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isSignupScreen = false;
-                  });
-                },
 
+
+              child: InkWell(
+                onTap: () =>
+                    Get.find<SignupControllers>().registerWithEmail(),
+                child: Container(
+                  height: 90,
+                  width: 90,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+
+                  ),
+                  child: Container(
+
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue, Colors.green],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.3),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0,1),
+                      )
+                      ],
+
+
+                      ),
+
+                    child: Icon(Icons.arrow_forward, color: Colors.white,),
+                    ),
+
+                  ),
+              ),
+            ),
+
+
+        ),
+        if (!isSignupScreen)
+          Positioned(
+            top: 535,
+            right: 0,
+            left: 0,
+            child: Form(
+              key: _formKey,
+              child: Center(
                 child: InkWell(
-                  onTap: () =>
-                  isSignupScreen ?
-                      Get.find<SignupControllers>().registerwithEmail(): Get.find<LoginControllers>().loginwithEmail(),
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {
+                      Get.find<LoginControllers>().loginwithEmail();
+                    }
+                  },
                   child: Container(
                     height: 90,
                     width: 90,
@@ -185,38 +262,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(50),
-
                     ),
                     child: Container(
-
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [Colors.blue, Colors.green],
                           begin: Alignment.topLeft,
-                          end: Alignment.bottomRight),
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(50),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(.3),
                             spreadRadius: 1,
                             blurRadius: 2,
-                            offset: Offset(0,1),
-                        )
+                            offset: Offset(0, 1),
+                          )
                         ],
-
-
-                        ),
-
-                      child: Icon(Icons.arrow_forward, color: Colors.white,),
                       ),
-
+                      child: Icon(Icons.arrow_forward, color: Colors.white),
                     ),
+                  ),
                 ),
               ),
             ),
+          ),
 
 
-        ),
+
+
+
+
+
+
       ]),
     );
 
