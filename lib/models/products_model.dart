@@ -1,4 +1,4 @@
-class Product {
+class ProductModel {
   final int productId;
   final String productName;
   final String? productImage; // Make productImage nullable
@@ -9,7 +9,7 @@ class Product {
   final String branchUuid;
   final String measurementUnit;
 
-  Product({
+  ProductModel({
     required this.productId,
     required this.productName,
     this.productImage,
@@ -21,7 +21,7 @@ class Product {
     required this.measurementUnit,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
+  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
     productId: json['product_id'],
     productName: json['product_name'],
     productImage: json['product_image']?['String'], // Extract image URL

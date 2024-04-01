@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tipot/models/ProductsModel.dart';
+import 'package:tipot/models/products_model.dart';
 
 class ProductList extends StatelessWidget {
-  final List<Product> products;
+  final List<ProductModel> products;
 
   const ProductList({Key? key, required this.products}) : super(key: key);
 
