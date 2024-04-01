@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tipot/rest_api/rest_api.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage(this.login, {super.key});
@@ -14,13 +18,34 @@ TextEditingController orgNameController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 TextEditingController confirmPasswordController = TextEditingController();
 
-Future<void> signupAPICall(
-    String orgName, email, password, confirmPassword) async {
-  if (password != confirmPassword) {}
-}
-
 class _SignupPageState extends State<SignupPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  var _isSignUpInProgress = false;
+
+  void _signupAPICall(String orgName, email, password, confirmPassword) async {
+    setState(() {
+      _isSignUpInProgress = true;
+    });
+    var headers = {'Content-Type': 'application/json'};
+
+    var data = json.encode(
+        {"UserEmail": email, "Password": password, "OrganizationID": orgName});
+    var dio = Dio();
+    var response = await dio.post(
+      '${ApiEndpoints.baseurl}/signup',
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+    if (_isSignUpInProgress && response.statusCode == 200) {
+      print(json.encode(response.data));
+      widget.login();
+    } else {
+      print(response.statusMessage);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,27 +171,30 @@ class _SignupPageState extends State<SignupPage> {
                 Container(
                     padding: const EdgeInsets.only(top: 3, left: 3),
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          return;
-                        } else {
-                          print("Un Successful");
-                        }
-                        signupAPICall(
-                            orgNameController.text.toString(),
-                            emailController.text.toString(),
-                            passwordController.text.toString(),
-                            confirmPasswordController.text.toString());
-                      },
+                      onPressed: _isSignUpInProgress
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                _signupAPICall(
+                                    orgNameController.text.toString(),
+                                    emailController.text.toString(),
+                                    passwordController.text.toString(),
+                                    confirmPasswordController.text.toString());
+                              } else {
+                                print("Un Successful");
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
                         shape: const StadiumBorder(),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: Colors.green,
                       ),
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      child: _isSignUpInProgress
+                          ? const CircularProgressIndicator()
+                          : const Text(
+                              "Sign up",
+                              style: TextStyle(fontSize: 20),
+                            ),
                     )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

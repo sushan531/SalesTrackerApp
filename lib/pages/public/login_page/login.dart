@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:tipot/rest_api/rest_api.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage(this.signUp, {super.key});
+  LoginPage(this.signUp, this.blank, {super.key});
 
   final void Function() signUp;
+  final void Function() blank;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -11,10 +15,35 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  var _logInProgress = false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController orgNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  void _logInAPICall(String, email, orgName, password) async {
+    setState(() {
+      _logInProgress = true;
+    });
+    var headers = {'Content-Type': 'application/json'};
+    var data = json.encode(
+        {"Email": email, "Password": password, "OrganizationName": orgName});
+    var dio = Dio();
+    var response = await dio.post(
+      '${ApiEndpoints.baseurl}/login',
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+    if (_logInProgress && response.statusCode == 200) {
+      widget.blank();
+      print(json.encode(response.data));
+    } else {
+      print(response.statusMessage);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
     return const Column(
       children: [
         Text(
-          "Welcome Back to Tipot",
+          "Welcome to Tipot",
           style: TextStyle(
             fontSize: 35,
             fontWeight: FontWeight.bold,
@@ -115,13 +144,19 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                return;
-              } else {
-                print("Un Successful");
-              }
-            },
+            onPressed: _logInProgress
+                ? null
+                : () {
+                    if (_formKey.currentState!.validate()) {
+                      _logInAPICall(
+                          String,
+                          emailController.text.toString(),
+                          orgNameController.text.toString(),
+                          passwordController.text.toString());
+                    } else {
+                      print("Un Successful");
+                    }
+                  },
             style: ElevatedButton.styleFrom(
               shape: const StadiumBorder(),
               padding: const EdgeInsets.symmetric(vertical: 16),
