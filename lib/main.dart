@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/pages/private/blank/blank.dart';
 import 'package:tipot/pages/public/login_page/login.dart';
 import 'package:tipot/pages/public/signup_page/signup.dart';
@@ -8,7 +9,6 @@ enum ActiveScreen { login, signup, blank }
 void main() {
   runApp(const Tipot());
 }
-
 
 class Tipot extends StatefulWidget {
   const Tipot({super.key});
@@ -21,22 +21,22 @@ class Tipot extends StatefulWidget {
 
 class _TipotState extends State<Tipot> {
   ActiveScreen activeScreen = ActiveScreen.login;
+  final _storage = const FlutterSecureStorage();
 
   Widget getActiveScreen(ActiveScreen screen) {
     switch (screen) {
       case ActiveScreen.login:
-        return LoginPage(switchToSignUp,
-            switchToBlank); // Replace with your login page widget
+        return LoginPage(switchToSignUp, switchToPrivate,
+            _storage); // Replace with your login page widget
       case ActiveScreen.signup:
         return SignupPage(
             switchToLogin); // Replace with your signup page widget
       case ActiveScreen.blank:
-        return const BlankPage();
+        return BlankPage(_storage);
       default:
         throw Exception('Invalid ActiveScreen value');
     }
   }
-
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _TipotState extends State<Tipot> {
     });
   }
 
-  void switchToBlank() {
+  void switchToPrivate() {
     setState(() {
       activeScreen = ActiveScreen.blank;
     });

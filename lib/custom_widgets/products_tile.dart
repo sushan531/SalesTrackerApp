@@ -8,6 +8,7 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(products.length);
     return ListView.builder(
       itemCount: products.length,
       itemBuilder: (context, index) {

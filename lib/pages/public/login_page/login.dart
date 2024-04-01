@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage(this.signUp, this.blank, {super.key});
+  LoginPage(this.signUp, this.blank, this.storage, {super.key});
 
   final void Function() signUp;
   final void Function() blank;
+  final FlutterSecureStorage storage;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -38,8 +40,8 @@ class _LoginPageState extends State<LoginPage> {
       data: data,
     );
     if (_logInProgress && response.statusCode == 200) {
+      widget.storage.write(key: "token", value: response.data['token']);
       widget.blank();
-      print(json.encode(response.data));
     } else {
       print(response.statusMessage);
     }
