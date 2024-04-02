@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/pages/private/blank/blank.dart';
-import 'package:tipot/pages/public/login_page/login.dart';
-import 'package:tipot/pages/public/signup_page/signup.dart';
+import 'package:tipot/screens/private/products/products.dart';
+import 'package:tipot/screens/public/login_page/login.dart';
+import 'package:tipot/screens/public/signup_page/signup.dart';
 
-enum ActiveScreen { login, signup, blank }
+enum ActiveScreen { login, signup, product }
 
 void main() {
   runApp(const Tipot());
@@ -31,8 +31,8 @@ class _TipotState extends State<Tipot> {
       case ActiveScreen.signup:
         return SignupPage(
             switchToLogin); // Replace with your signup page widget
-      case ActiveScreen.blank:
-        return BlankPage(_storage);
+      case ActiveScreen.product:
+        return ProductsScreen(_storage);
       default:
         throw Exception('Invalid ActiveScreen value');
     }
@@ -57,12 +57,17 @@ class _TipotState extends State<Tipot> {
 
   void switchToPrivate() {
     setState(() {
-      activeScreen = ActiveScreen.blank;
+      activeScreen = ActiveScreen.product;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var accessToken = _storage.read(key: "access_token").toString();
+    // TODO: verify expiry date
+    if (accessToken != "") {
+      activeScreen = ActiveScreen.product;
+    }
     return MaterialApp(
       theme: ThemeData(),
       home: getActiveScreen(activeScreen),

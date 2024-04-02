@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/state_manager.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage(this.signUp, this.blank, this.storage, {super.key});
+  const LoginPage(this.signUp, this.blank, this.storage, {super.key});
 
   final void Function() signUp;
   final void Function() blank;
@@ -61,7 +60,8 @@ class _LoginPageState extends State<LoginPage> {
         data: data,
       );
       if (_logInProgress && response.statusCode == 200) {
-        widget.storage.write(key: "token", value: response.data['token']);
+        widget.storage.deleteAll();
+        widget.storage.write(key: "access_token", value: response.data['token']);
         widget.blank();
       }
     } on DioException catch (error) {
