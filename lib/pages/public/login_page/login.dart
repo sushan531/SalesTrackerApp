@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/state_manager.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,7 +24,26 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController orgNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  void _logInAPICall(String, email, orgName, password) async {
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Login Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+    setState(() {
+      _logInProgress = false;
+    });
+  }
+
+  void _logInAPICall(String email, orgName, password) async {
     setState(() {
       _logInProgress = true;
     });
@@ -31,19 +51,33 @@ class _LoginPageState extends State<LoginPage> {
     var data = json.encode(
         {"Email": email, "Password": password, "OrganizationName": orgName});
     var dio = Dio();
-    var response = await dio.post(
-      '${ApiEndpoints.baseurl}/login',
-      options: Options(
-        method: 'POST',
-        headers: headers,
-      ),
-      data: data,
-    );
-    if (_logInProgress && response.statusCode == 200) {
-      widget.storage.write(key: "token", value: response.data['token']);
-      widget.blank();
-    } else {
-      print(response.statusMessage);
+    try {
+      var response = await dio.post(
+        '${ApiEndpoints.baseurl}/login',
+        options: Options(
+          method: 'POST',
+          headers: headers,
+        ),
+        data: data,
+      );
+      if (_logInProgress && response.statusCode == 200) {
+        widget.storage.write(key: "token", value: response.data['token']);
+        widget.blank();
+      }
+    } on DioException catch (error) {
+      String errorMessage = "Unknown Error";
+      // Handle specific error codes
+      switch (error.response!.statusCode) {
+        case 400:
+          errorMessage = "Invalid Credentials";
+          break;
+        case 500:
+          errorMessage = "Internal Server Error";
+          break;
+      }
+      _showErrorDialog(errorMessage);
+    } finally {
+      dio.close();
     }
   }
 
@@ -151,7 +185,6 @@ class _LoginPageState extends State<LoginPage> {
                 : () {
                     if (_formKey.currentState!.validate()) {
                       _logInAPICall(
-                          String,
                           emailController.text.toString(),
                           orgNameController.text.toString(),
                           passwordController.text.toString());

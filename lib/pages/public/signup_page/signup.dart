@@ -22,6 +22,25 @@ class _SignupPageState extends State<SignupPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   var _isSignUpInProgress = false;
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Login Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+    setState(() {
+      _isSignUpInProgress = false;
+    });
+  }
+
   void _signupAPICall(String orgName, email, password, confirmPassword) async {
     setState(() {
       _isSignUpInProgress = true;
@@ -31,19 +50,29 @@ class _SignupPageState extends State<SignupPage> {
     var data = json.encode(
         {"UserEmail": email, "Password": password, "OrganizationID": orgName});
     var dio = Dio();
-    var response = await dio.post(
-      '${ApiEndpoints.baseurl}/signup',
-      options: Options(
-        method: 'POST',
-        headers: headers,
-      ),
-      data: data,
-    );
-    if (_isSignUpInProgress && response.statusCode == 200) {
-      print(json.encode(response.data));
-      widget.login();
-    } else {
-      print(response.statusMessage);
+    try {
+      var response = await dio.post(
+        '${ApiEndpoints.baseurl}/signup',
+        options: Options(
+          method: 'POST',
+          headers: headers,
+        ),
+        data: data,
+      );
+      if (_isSignUpInProgress && response.statusCode == 200) {
+        print(json.encode(response.data));
+        widget.login();
+      }
+    } on DioException catch (error) {
+      String errorMessage = "Unknown Error";
+      switch (error.response!.statusCode) {
+        case 500:
+          errorMessage = "Organization Name Taken!";
+          break;
+      }
+      _showErrorDialog(errorMessage);
+    } finally {
+      dio.close();
     }
   }
 
@@ -108,7 +137,7 @@ class _SignupPageState extends State<SignupPage> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return "Please entry Organization Name";
-                          } 
+                          }
                           return null;
                         },
                         controller: emailController,
