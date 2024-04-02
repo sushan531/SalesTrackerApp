@@ -155,6 +155,9 @@ class _LoginPageState extends State<LoginPage> {
                           emailController.text.toString(),
                           orgNameController.text.toString(),
                           passwordController.text.toString());
+                      emailController.text = "";
+                      orgNameController.text = "";
+                      passwordController.text = "";
                     } else {
                       print("Un Successful");
                     }

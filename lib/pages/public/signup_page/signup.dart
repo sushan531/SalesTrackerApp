@@ -108,7 +108,7 @@ class _SignupPageState extends State<SignupPage> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return "Please entry Organization Name";
-                          }
+                          } 
                           return null;
                         },
                         controller: emailController,
@@ -180,6 +180,10 @@ class _SignupPageState extends State<SignupPage> {
                                     emailController.text.toString(),
                                     passwordController.text.toString(),
                                     confirmPasswordController.text.toString());
+                                orgNameController.text = "";
+                                emailController.text = "";
+                                passwordController.text = "";
+                                confirmPasswordController.text = "";
                               } else {
                                 print("Un Successful");
                               }
