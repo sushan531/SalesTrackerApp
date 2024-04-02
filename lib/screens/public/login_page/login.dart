@@ -23,6 +23,14 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController orgNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  @override
+  void dispose() {
+    emailController.dispose();
+    orgNameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -61,7 +69,8 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (_logInProgress && response.statusCode == 200) {
         widget.storage.deleteAll();
-        widget.storage.write(key: "access_token", value: response.data['token']);
+        widget.storage
+            .write(key: "access_token", value: response.data['token']);
         widget.blank();
       }
     } on DioException catch (error) {
