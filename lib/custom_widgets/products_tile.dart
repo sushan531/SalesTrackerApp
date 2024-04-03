@@ -22,8 +22,7 @@ class Product extends StatelessWidget {
         leading: const Icon(Icons.shopping_bag),
         title: Text(product.productName),
         subtitle: Text(
-          'Selling Price: \$${product.sellingPrice} - \nQuantity: ${product
-              .remainingQuantity} ${product.measurementUnit}',
+          'Selling Price: \$${product.sellingPrice} - \nQuantity: ${product.remainingQuantity} ${product.measurementUnit}',
         ),
         trailing: TextButton.icon(
           icon: const Icon(Icons.add),

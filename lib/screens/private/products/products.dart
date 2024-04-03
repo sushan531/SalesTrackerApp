@@ -6,6 +6,7 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:tipot/custom_widgets/products_tile.dart';
 import 'package:tipot/models/products_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/products/products_add.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen(this.storage, {super.key});
@@ -40,12 +41,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         );
       case 1:
-        return Center(
-          child: Text(
-            "Dashboard Page\n$_page",
-            style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-          ),
-        );
+        return ProductsAdd();
       case 2:
         return SmartRefresher(
           controller: _refreshController,
@@ -142,7 +138,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product List'),
+        title: const Text('Products',
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        centerTitle: true,
       ),
       body: getActivePage(_page),
       bottomNavigationBar: CurvedNavigationBar(
