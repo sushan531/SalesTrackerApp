@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/custom_widgets/branches_tile.dart';
 import 'package:tipot/custom_widgets/products_tile.dart';
 import 'package:tipot/models/branch_model.dart';
 import 'package:tipot/models/products_model.dart';
+import 'package:tipot/rest_api/rest_api.dart';
 
 class BranchesAdd extends StatefulWidget {
   const BranchesAdd({Key? key}) : super(key: key);
@@ -14,9 +19,12 @@ class BranchesAdd extends StatefulWidget {
 }
 
 class _BranchesAddState extends State<BranchesAdd> {
+  final storage = const FlutterSecureStorage();
   String? _branchName;
   final GlobalKey<FormState> _formKey = GlobalKey();
   final List<BranchModel> _branches = [];
+  var _accessToken = "";
+  var _orgId = "";
 
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
@@ -27,8 +35,39 @@ class _BranchesAddState extends State<BranchesAdd> {
     }
   }
 
-  void _saveItemAndUpload() {
-    //TODO call the rest api to upload the products
+  Future<void> _upload() async {
+    _accessToken = await storage.read(key: "access_token") ?? "";
+    _orgId = await storage.read(key: "organization_id") ?? "";
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $_accessToken',
+    };
+    var dio = Dio();
+    try {
+      for (var branch in _branches) {
+        var data = json.encode(
+            {"BranchName": branch.branchName, "OrganizationID": _orgId});
+        var uri = '${ApiEndpoints.baseurl}/api/admin/add-branch';
+        print(uri);
+        print(data);
+        var response = await dio.request(
+          uri,
+          options: Options(
+            method: 'POST',
+            headers: headers,
+          ),
+          data: data,
+        );
+      }
+      setState(() {
+        _branches.clear();
+      });
+    } catch (error) {
+      print("Error fetching data: $error");
+    } finally {
+      dio.close();
+    }
   }
 
   @override
@@ -93,7 +132,7 @@ class _BranchesAddState extends State<BranchesAdd> {
                               onPressed: _saveItem, child: const Text("Save")),
                           const SizedBox(width: 10.0),
                           ElevatedButton(
-                              onPressed: _saveItem, child: const Text("Upload"))
+                              onPressed: _upload, child: const Text("Upload"))
                         ]),
                   )
                 ],

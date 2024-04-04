@@ -4,6 +4,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:tipot/custom_widgets/branches_tile.dart';
 import 'package:tipot/models/branch_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
@@ -28,7 +29,7 @@ class _BranchesScreenState extends State<BranchesScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _fetchData(true);
   }
 
   int _page = 2;
@@ -45,24 +46,38 @@ class _BranchesScreenState extends State<BranchesScreen> {
       case 1:
         return const BranchesAdd();
       case 2:
-        return ListView.separated(
-            padding: const EdgeInsets.all(8),
-            itemBuilder: (context, index) {
-              final branch = _branches[index];
-              return Branch(
-                widget.storage,
-                branch: branch,
-                isActive: _activeBranch == branch.uuid,
-              );
-            },
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: _branches.length);
+        return SmartRefresher(
+          controller: _refreshController,
+          enablePullDown: false,
+          enablePullUp: true,
+          onLoading: () async {
+            final status = await _fetchData(false);
+            if (status) {
+              _refreshController.loadComplete();
+            } else {
+              _refreshController.loadNoData();
+            }
+          },
+          child: ListView.separated(
+              padding: const EdgeInsets.all(8),
+              itemBuilder: (context, index) {
+                final branch = _branches[index];
+                return Branch(
+                  widget.storage,
+                  branch: branch,
+                  isActive: _activeBranch == branch.uuid,
+                );
+              },
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: _branches.length),
+        );
       default:
         throw Exception('Invalid ActiveScreen value');
     }
   }
 
-  Future<bool> _fetchData() async {
+  Future<bool> _fetchData(bool? refresh) async {
+    _branches.clear();
     _activeBranch = await widget.storage.read(key: "active_branch_uuid") ?? "";
     accessToken = await widget.storage.read(key: "access_token") ?? "";
     var dio = Dio();
@@ -116,6 +131,8 @@ class _BranchesScreenState extends State<BranchesScreen> {
       dio.close();
     }
   }
+
+  final RefreshController _refreshController = RefreshController();
 
   @override
   Widget build(BuildContext context) {

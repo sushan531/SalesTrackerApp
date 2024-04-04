@@ -47,14 +47,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
           controller: _refreshController,
           enablePullDown: false,
           enablePullUp: true,
-          onRefresh: () async {
-            final status = await _fetchData(true);
-            if (status) {
-              _refreshController.refreshCompleted();
-            } else {
-              _refreshController.refreshFailed();
-            }
-          },
           onLoading: () async {
             final status = await _fetchData(false);
             if (status) {

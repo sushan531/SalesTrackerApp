@@ -21,6 +21,17 @@ class ProductModel {
     required this.measurementUnit,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'ProductName': productName,
+      'Description': description,
+      'SellingPrice': sellingPrice.toString(), // Convert to string
+      'RemainingQuantity': remainingQuantity,
+      'BranchUuid': branchUuid,
+      'MeasurementUnit': measurementUnit,
+    };
+  }
+
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
         productId: json['product_id'],
         productName: json['product_name'],
