@@ -71,6 +71,10 @@ class _LoginPageState extends State<LoginPage> {
         widget.storage.deleteAll();
         widget.storage
             .write(key: "access_token", value: response.data['token']);
+        widget.storage
+            .write(key: "organization_id", value: response.data['org_id']);
+        widget.storage
+            .write(key: "organization_name", value: response.data['org_name']);
         widget.blank();
       }
     } on DioException catch (error) {
