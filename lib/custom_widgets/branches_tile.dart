@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/models/branch_model.dart';
+import 'package:tipot/screens/private/branches/branches.dart';
 
 class BranchMini extends StatelessWidget {
   final BranchModel branch;
@@ -30,7 +31,7 @@ class BranchMini extends StatelessWidget {
   }
 }
 
-class Branch extends StatelessWidget {
+class Branch extends StatefulWidget {
   final BranchModel branch;
 
   const Branch(this.storage,
@@ -40,8 +41,13 @@ class Branch extends StatelessWidget {
   final FlutterSecureStorage storage;
   final bool isActive;
 
+  @override
+  State<Branch> createState() => _BranchState();
+}
+
+class _BranchState extends State<Branch> {
   void _setActiveBranchUuid(String? uuid) {
-    storage.write(key: "active_branch_uuid", value: uuid);
+    widget.storage.write(key: "active_branch_uuid", value: uuid);
   }
 
   @override
@@ -58,23 +64,24 @@ class Branch extends StatelessWidget {
       ),
       child: ListTile(
         leading: const Icon(Icons.shopping_bag),
-        title: Text(branch.branchName),
+        title: Text(widget.branch.branchName),
         subtitle: Text(
-          'BranchId: ${branch.uuid}',
+          'BranchId: ${widget.branch.uuid}',
         ),
         trailing: TextButton.icon(
-          icon: isActive
+          icon: widget.isActive
               ? const Icon(Icons.insert_emoticon_rounded)
               : const Icon(Icons.insert_emoticon_outlined),
           onPressed: () {
-            _setActiveBranchUuid(branch.uuid);
+            _setActiveBranchUuid(widget.branch.uuid);
           },
           style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
               textStyle: const TextStyle(color: Colors.greenAccent),
               backgroundColor: Colors.white),
-          label: isActive ? const Text("Active") : const Text("Inactive"),
+          label:
+              widget.isActive ? const Text("Active") : const Text("Inactive"),
         ),
       ),
     );

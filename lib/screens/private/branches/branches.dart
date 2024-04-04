@@ -11,9 +11,9 @@ import 'package:tipot/rest_api/rest_api.dart';
 import 'package:tipot/screens/private/branches/branches_add.dart';
 
 class BranchesScreen extends StatefulWidget {
-  const BranchesScreen(this.storage, {super.key});
+  const BranchesScreen({super.key});
 
-  final FlutterSecureStorage storage;
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   State<BranchesScreen> createState() {

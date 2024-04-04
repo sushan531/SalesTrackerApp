@@ -9,9 +9,9 @@ import 'package:tipot/rest_api/rest_api.dart';
 import 'package:tipot/screens/private/products/products_add.dart';
 
 class ProductsScreen extends StatefulWidget {
-  const ProductsScreen(this.storage, {super.key});
+  const ProductsScreen({super.key});
 
-  final FlutterSecureStorage storage;
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();

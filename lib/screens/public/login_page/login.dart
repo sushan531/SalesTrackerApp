@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:tipot/models/branch_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/branches/branches.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage(this.signUp, this.next, this.storage, {super.key});
+  const LoginPage(this.signUp, {super.key});
 
   final void Function() signUp;
-  final void Function() next;
-  final FlutterSecureStorage storage;
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -50,6 +51,46 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  void _getSetMetadata(Dio dio, String accessToken) async {
+    var headers = {
+      'Cache-Control': 'true',
+      'Authorization': 'Bearer $accessToken',
+    };
+    try {
+      var uri = '${ApiEndpoints.baseurl}/api/self/get-users-branch';
+      var response = await dio.request(
+        uri,
+        options: Options(
+          method: 'GET',
+          headers: headers,
+        ),
+      );
+      if (response.statusCode == 200) {
+        var records = response.data["response"] as List;
+        // NOTE : Setting the first branch to the default branch
+        widget.storage
+            .write(key: "active_branch_uuid", value: records[0]["uuid"]);
+        var branchNames = [];
+        for (var element in records) {
+          branchNames.add(element["branch_name"]);
+          widget.storage
+              .write(key: element["branch_name"], value: element["uuid"]);
+        }
+        widget.storage
+            .write(key: "branch_list", value: jsonEncode(branchNames));
+        setState(() {});
+      } else {
+        // Handle error scenario
+        print("Error fetching data: ${response.statusCode}");
+      }
+    } catch (error) {
+      // Handle network or other exceptions
+      print("Error fetching data: $error");
+    } finally {
+      dio.close();
+    }
+  }
+
   void _logInAPICall(String email, orgName, password) async {
     setState(() {
       _logInProgress = true;
@@ -75,7 +116,11 @@ class _LoginPageState extends State<LoginPage> {
             .write(key: "organization_id", value: response.data['org_id']);
         widget.storage
             .write(key: "organization_name", value: response.data['org_name']);
-        widget.next();
+        setState(() {
+          _getSetMetadata(dio, response.data['token']);
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const BranchesScreen()));
+        });
       }
     } on DioException catch (error) {
       String errorMessage = "Unknown Error";

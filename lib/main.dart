@@ -22,20 +22,18 @@ class Tipot extends StatefulWidget {
 
 class _TipotState extends State<Tipot> {
   ActiveScreen activeScreen = ActiveScreen.login;
-  final _storage = const FlutterSecureStorage();
 
   Widget getActiveScreen(ActiveScreen screen) {
     switch (screen) {
       case ActiveScreen.login:
-        return LoginPage(switchToSignUp, switchToPrivate,
-            _storage); // Replace with your login page widget
+        return LoginPage(switchToSignUp); // Replace with your login page widget
       case ActiveScreen.signup:
         return SignupPage(
             switchToLogin); // Replace with your signup page widget
       case ActiveScreen.product:
-        return ProductsScreen(_storage);
+        return const ProductsScreen();
       case ActiveScreen.branch:
-        return BranchesScreen(_storage);
+        return const BranchesScreen();
 
       default:
         throw Exception('Invalid ActiveScreen value');
@@ -67,11 +65,11 @@ class _TipotState extends State<Tipot> {
 
   @override
   Widget build(BuildContext context) {
-    var accessToken = _storage.read(key: "access_token").toString();
+    // var accessToken = _storage.read(key: "access_token").toString();
     // TODO: verify expiry date
-    if (accessToken != "") {
-      activeScreen = ActiveScreen.product;
-    }
+    // if (accessToken != "") {
+    //   activeScreen = ActiveScreen.branch;
+    // }
     return MaterialApp(
       theme: ThemeData(),
       home: getActiveScreen(activeScreen),

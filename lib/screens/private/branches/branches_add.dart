@@ -8,6 +8,7 @@ import 'package:tipot/custom_widgets/products_tile.dart';
 import 'package:tipot/models/branch_model.dart';
 import 'package:tipot/models/products_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/branches/branches.dart';
 
 class BranchesAdd extends StatefulWidget {
   const BranchesAdd({Key? key}) : super(key: key);
@@ -68,6 +69,10 @@ class _BranchesAddState extends State<BranchesAdd> {
     } finally {
       dio.close();
     }
+    setState(() {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const BranchesScreen()));
+    });
   }
 
   @override
