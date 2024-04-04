@@ -9,6 +9,7 @@ import 'package:tipot/custom_widgets/branches_tile.dart';
 import 'package:tipot/models/branch_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 import 'package:tipot/screens/private/branches/branches_add.dart';
+import 'package:tipot/screens/private/tipot_drawer/tipot_drawer.dart';
 
 class BranchesScreen extends StatefulWidget {
   const BranchesScreen({super.key});
@@ -137,6 +138,7 @@ class _BranchesScreenState extends State<BranchesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: TipotDrawer(),
       appBar: AppBar(
         title: const Text('Organization Branches',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
@@ -152,7 +154,7 @@ class _BranchesScreenState extends State<BranchesScreen> {
         items: const [
           Icon(Icons.dashboard_rounded, size: 25, color: Colors.white),
           Icon(Icons.add, size: 25, color: Colors.white),
-          Icon(Icons.list_alt, size: 25, color: Colors.white),
+          Icon(Icons.account_tree, size: 25, color: Colors.white),
         ],
         index: _page,
         onTap: (index) {

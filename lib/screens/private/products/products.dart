@@ -7,6 +7,7 @@ import 'package:tipot/custom_widgets/products_tile.dart';
 import 'package:tipot/models/products_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 import 'package:tipot/screens/private/products/products_add.dart';
+import 'package:tipot/screens/private/tipot_drawer/tipot_drawer.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -128,6 +129,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: TipotDrawer(),
       appBar: AppBar(
         title: const Text('Products',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
@@ -143,7 +145,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         items: const [
           Icon(Icons.dashboard_rounded, size: 25, color: Colors.white),
           Icon(Icons.add, size: 25, color: Colors.white),
-          Icon(Icons.list_alt, size: 25, color: Colors.white),
+          Icon(Icons.shopping_bag, size: 25, color: Colors.white),
         ],
         index: _page,
         onTap: (index) {
