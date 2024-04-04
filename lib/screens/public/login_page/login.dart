@@ -5,10 +5,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage(this.signUp, this.blank, this.storage, {super.key});
+  const LoginPage(this.signUp, this.next, this.storage, {super.key});
 
   final void Function() signUp;
-  final void Function() blank;
+  final void Function() next;
   final FlutterSecureStorage storage;
 
   @override
@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
             .write(key: "organization_id", value: response.data['org_id']);
         widget.storage
             .write(key: "organization_name", value: response.data['org_name']);
-        widget.blank();
+        widget.next();
       }
     } on DioException catch (error) {
       String errorMessage = "Unknown Error";
