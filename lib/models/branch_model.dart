@@ -1,8 +1,8 @@
 class BranchModel {
-  final String uuid;
+  final String? uuid;
   final String branchName;
 
-  BranchModel({required this.uuid, required this.branchName});
+  BranchModel({this.uuid, required this.branchName});
 
   factory BranchModel.fromJson(Map<String, dynamic> json) {
     return BranchModel(

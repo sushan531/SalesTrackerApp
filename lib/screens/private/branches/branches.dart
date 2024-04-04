@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/custom_widgets/branches_tile.dart';
 import 'package:tipot/models/branch_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/branches/branches_add.dart';
 
 class BranchesScreen extends StatefulWidget {
   const BranchesScreen(this.storage, {super.key});
@@ -42,12 +43,7 @@ class _BranchesScreenState extends State<BranchesScreen> {
           ),
         );
       case 1:
-        return Center(
-          child: Text(
-            "Dashboard Page\n$_page",
-            style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-          ),
-        );
+        return const BranchesAdd();
       case 2:
         return ListView.separated(
             padding: const EdgeInsets.all(8),

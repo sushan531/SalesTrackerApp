@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:tipot/screens/private/branches/branches.dart';
 import 'package:tipot/screens/private/products/products.dart';
 import 'package:tipot/screens/public/login_page/login.dart';
 import 'package:tipot/screens/public/signup_page/signup.dart';
 
-enum ActiveScreen { login, signup, product }
+enum ActiveScreen { login, signup, product, branch }
 
 void main() {
   runApp(const Tipot());
@@ -33,6 +34,9 @@ class _TipotState extends State<Tipot> {
             switchToLogin); // Replace with your signup page widget
       case ActiveScreen.product:
         return ProductsScreen(_storage);
+      case ActiveScreen.branch:
+        return BranchesScreen(_storage);
+
       default:
         throw Exception('Invalid ActiveScreen value');
     }

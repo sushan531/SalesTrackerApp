@@ -87,8 +87,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       nextToken = await widget.storage.read(key: "next_token") ?? "";
     }
     accessToken = await widget.storage.read(key: "access_token") ?? "";
-    activeBranch = await widget.storage.read(key: "active_branch") ??
-        "98c3b346-6254-4bbc-9e07-9bf15efc89d6";
+    activeBranch = await widget.storage.read(key: "active_branch_uuid") ?? "";
     var dio = Dio();
     var headers = {
       'Cache-Control': 'true',
