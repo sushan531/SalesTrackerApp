@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tipot/image_reader.dart';
 
 void main() {
   runApp(const Tipot());
@@ -19,7 +20,7 @@ class _TipotState extends State<Tipot> {
 
     return MaterialApp(
       theme: ThemeData(),
-      home: Container(), // Your code here
+      home: ImageReader(), // Your code here
     );
   }
 }
