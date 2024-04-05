@@ -138,7 +138,7 @@ class _BranchesScreenState extends State<BranchesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: TipotDrawer(),
+      drawer: const TipotDrawer(),
       appBar: AppBar(
         title: const Text('Organization Branches',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
