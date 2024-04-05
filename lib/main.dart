@@ -16,11 +16,7 @@ class Tipot extends StatefulWidget {
 class _TipotState extends State<Tipot> {
   @override
   Widget build(BuildContext context) {
-    // var accessToken = _storage.read(key: "access_token").toString();
-    // TODO: verify expiry date
-    // if (accessToken != "") {
-    //   activeScreen = ActiveScreen.branch;
-    // }
+
     return MaterialApp(
       theme: ThemeData(),
       home: Container(), // Your code here
