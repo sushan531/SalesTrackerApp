@@ -1,0 +1,112 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:tipot/screens/private/branches/branches.dart';
+import 'package:tipot/screens/private/products/products.dart';
+
+class HeaderDrawer extends StatefulWidget {
+  const HeaderDrawer({super.key});
+
+  @override
+  State<HeaderDrawer> createState() => _HeaderDrawerState();
+}
+
+class _HeaderDrawerState extends State<HeaderDrawer> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.green[700],
+      width: double.infinity,
+      height: 200,
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            height: 70,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: AssetImage("image/user.png"),
+              ),
+            ),
+          ),
+          const Text(
+            "User Email!",
+            style: TextStyle(color: Colors.white, fontSize: 30),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class DrawerList extends StatefulWidget {
+  const DrawerList({super.key});
+
+  @override
+  State<DrawerList> createState() => _DrawerListState();
+}
+
+class _DrawerListState extends State<DrawerList> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 30,
+        ),
+        ListTile(
+          leading: const Icon(Icons.account_tree),
+          title: const Text("Branches"),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BranchesScreen()));
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.shopping_bag),
+          title: const Text("Products"),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ProductsScreen()));
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class TipotDrawer extends StatefulWidget {
+  const TipotDrawer({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _TipotDrawerState();
+  }
+}
+
+class _TipotDrawerState extends State<TipotDrawer> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.5,
+      child: const Drawer(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              HeaderDrawer(),
+              DrawerList(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
