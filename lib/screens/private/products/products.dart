@@ -42,7 +42,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         );
       case 1:
-        return const ProductsAdd();
+        return ProductsAdd();
       case 2:
         return SmartRefresher(
           controller: _refreshController,
@@ -129,7 +129,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const TipotDrawer(),
+      drawer: TipotDrawer(),
       appBar: AppBar(
         title: const Text('Products',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),

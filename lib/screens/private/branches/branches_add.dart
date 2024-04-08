@@ -143,7 +143,7 @@ class _BranchesAddState extends State<BranchesAdd> {
                 ],
               ),
             )),
-        const SizedBox(height: 20.0),
+        SizedBox(height: 20.0),
       ]),
       // bottomNavigationBar: BottomNavigationBar(
       //   items: const [

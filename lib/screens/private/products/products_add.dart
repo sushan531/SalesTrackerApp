@@ -264,7 +264,7 @@ class _ProductsAddState extends State<ProductsAdd> {
                 ],
               ),
             )),
-        const SizedBox(height: 20.0),
+        SizedBox(height: 20.0),
       ]),
       // bottomNavigationBar: BottomNavigationBar(
       //   items: const [

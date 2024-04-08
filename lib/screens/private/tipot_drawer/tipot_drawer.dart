@@ -17,12 +17,12 @@ class _HeaderDrawerState extends State<HeaderDrawer> {
       color: Colors.green[700],
       width: double.infinity,
       height: 200,
-      padding: const EdgeInsets.only(top: 20),
+      padding: EdgeInsets.only(top: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            margin: const EdgeInsets.only(bottom: 10),
+            margin: EdgeInsets.only(bottom: 10),
             height: 70,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
@@ -31,7 +31,7 @@ class _HeaderDrawerState extends State<HeaderDrawer> {
               ),
             ),
           ),
-          const Text(
+          Text(
             "User Email!",
             style: TextStyle(color: Colors.white, fontSize: 30),
           )
@@ -96,7 +96,7 @@ class _TipotDrawerState extends State<TipotDrawer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.5,
+      width: MediaQuery.of(context).size.width*0.5,
       child: const Drawer(
         child: SingleChildScrollView(
           child: Column(
