@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/screens/private/branches/branches.dart';
 import 'package:tipot/screens/private/products/products.dart';
@@ -8,7 +9,7 @@ import 'package:tipot/screens/public/signup_page/signup.dart';
 enum ActiveScreen { login, signup, product, branch }
 
 void main() {
-  runApp(const Tipot());
+  runApp(const ProviderScope(child: Tipot()));
 }
 
 class Tipot extends StatefulWidget {
@@ -22,6 +23,7 @@ class Tipot extends StatefulWidget {
 
 class _TipotState extends State<Tipot> {
   ActiveScreen activeScreen = ActiveScreen.login;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   Widget getActiveScreen(ActiveScreen screen) {
     switch (screen) {
@@ -70,6 +72,7 @@ class _TipotState extends State<Tipot> {
     // if (accessToken != "") {
     //   activeScreen = ActiveScreen.branch;
     // }
+    _storage.deleteAll();
     return MaterialApp(
       theme: ThemeData(),
       home: getActiveScreen(activeScreen),
