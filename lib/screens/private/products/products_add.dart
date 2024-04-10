@@ -67,18 +67,19 @@ class _ProductsAddState extends State<ProductsAdd> {
   }
 
   Future<void> _upload() async {
-    _accessToken = await storage.read(key: "access_token") ?? "";
+    _accessToken = (await storage.read(key: "access_token")).toString();
     var jsonObject = _products.map((product) => product.toJson()).toList();
-
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $_accessToken',
     };
     var dio = Dio();
     try {
-      var data = json.encode({"Data":jsonObject});
+      var data = json.encode({"Data": jsonObject});
       var uri = '${ApiEndpoints.baseurl}/api/product/add';
-      print(jsonObject);
+      // print(jsonObject);
+      Future.delayed(const Duration(seconds: 1));
+
       var response = await dio.request(
         uri,
         options: Options(

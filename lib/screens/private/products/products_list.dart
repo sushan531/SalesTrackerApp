@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,207 +13,301 @@ import 'package:tipot/models/products_model.dart';
 import 'package:tipot/providers/active_branch_providers.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
-class ProductsListPage extends StatefulWidget {
+class ProductsListPage extends ConsumerStatefulWidget {
   const ProductsListPage({super.key});
 
   @override
-  State<ProductsListPage> createState() => _ProductsListState();
+  ConsumerState<ProductsListPage> createState() => _ProductsListState();
 }
 
-class _ProductsListState extends State<ProductsListPage> {
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        ProductsBranchHorizontalList(),
-        SizedBox(
-          height: 5,
-        ),
-        ListOfProducts(),
-      ],
-    );
-  }
-}
-
-class ProductsBranchHorizontalList extends ConsumerStatefulWidget {
-  const ProductsBranchHorizontalList({super.key});
-
-  final FlutterSecureStorage storage = const FlutterSecureStorage();
-
-  @override
-  ConsumerState<ProductsBranchHorizontalList> createState() =>
-      _ProductsBranchHorizontalListState();
-}
-
-class _ProductsBranchHorizontalListState
-    extends ConsumerState<ProductsBranchHorizontalList> {
-  // var nextToken = "";
-  // var accessToken = "";
-  // int limit = 7;
-  // var previousActiveBranchUuid = "";
-  var _activeBranchName = "";
-  var _newActiveBranchName = "";
-  var _activeBranchUuid = "";
-  List<dynamic> _branches = [];
-
+class _ProductsListState extends ConsumerState<ProductsListPage> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final RefreshController _refreshController = RefreshController();
 
-  Map<String, String> branchNameToUuidMap = {};
-
-  // Future<bool> _fetchData(bool? refresh) async {
-  //   if (refresh == true) {
-  //     products.clear();
-  //     nextToken = "";
-  //   } else {
-  //     nextToken = await widget.storage.read(key: "next_token") ?? "";
-  //   }
-  //   accessToken = await widget.storage.read(key: "access_token") ?? "";
-  //   activeBranchUuid =
-  //       await widget.storage.read(key: "active_branch_uuid") ?? "";
-  //   var dio = Dio();
-  //   var headers = {
-  //     'Cache-Control': 'true',
-  //     'Authorization': 'Bearer $accessToken',
-  //   };
-  //   try {
-  //     var uri =
-  //         '${ApiEndpoints.baseurl}/api/product/list?bid=$activeBranchUuid&limit=$limit&token=$nextToken';
-  //     print(uri);
-  //     var response = await dio.request(
-  //       uri,
-  //       options: Options(
-  //         method: 'GET',
-  //         headers: headers,
-  //       ),
-  //     );
-  //     dio.close();
-  //     if (response.statusCode == 200) {
-  //       var records = response.data["data"] as List;
-  //       _refreshController.loadComplete();
-  //       if (records.isEmpty) {
-  //         return true;
-  //       }
-  //       widget.storage
-  //           .write(key: "next_token", value: response.data["next_token"]);
-  //       List<ProductModel> _products =
-  //           records.map((record) => ProductModel.fromJson(record)).toList();
-  //       products.addAll(_products);
-  //       setState(() {});
-  //       return true;
-  //     } else {
-  //       // Handle error scenario
-  //       print("Error fetching data: ${response.statusCode}");
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     // Handle network or other exceptions
-  //     print("Error fetching data: $error");
-  //     return false;
-  //   } finally {
-  //     dio.close();
-  //   }
-  // }
-  //
-  // final RefreshController _refreshController = RefreshController();
+  var _activeBranchName = "";
+  var _activeBranchUuid = "";
+  var _accessToken = "";
+  List<dynamic> _branches = [];
+  var nextToken = "";
+  int limit = 10;
+  List<ProductModel> _products = [];
 
   @override
   void initState() {
     super.initState();
-    // Parse JSON data
     _getBranches();
   }
 
   Future<void> _getBranches() async {
-    _activeBranchUuid = (await _storage.read(key: "active_branch_uuid"))!;
     _activeBranchName = (await _storage.read(key: "active_branch_name"))!;
     var localBranches = (await _storage.read(key: "branch_list"))!;
     _branches = jsonDecode(localBranches);
   }
 
+  Future _getProducts(bool newBranch) async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (newBranch) {
+      _products.clear();
+      nextToken = "";
+    }
+    _accessToken = (await _storage.read(key: "access_token"))!;
+    _activeBranchUuid = (await _storage.read(key: _activeBranchName))!;
+
+    var dio = Dio();
+    var headers = {
+      'Cache-Control': 'true',
+      'Authorization': 'Bearer $_accessToken',
+    };
+    try {
+      var uri =
+          '${ApiEndpoints.baseurl}/api/product/list?bid=$_activeBranchUuid&limit=$limit&token=$nextToken';
+      print(uri);
+      var response = await dio.request(
+        uri,
+        options: Options(
+          method: 'GET',
+          headers: headers,
+        ),
+      );
+      dio.close();
+      if (response.statusCode == 200) {
+        var records = response.data["data"] as List;
+        _refreshController.loadComplete();
+        if (records.isEmpty) {
+          return true;
+        }
+        _storage.write(key: "next_token", value: response.data["next_token"]);
+        List<ProductModel> products =
+            records.map((record) => ProductModel.fromJson(record)).toList();
+        _products.addAll(products);
+        // debugPrint(products[0].branchUuid);
+        return true;
+      } else {
+        // Handle error scenario
+        debugPrint("Error fetching data: ${response.statusCode}");
+        return false;
+      }
+    } catch (error) {
+      // Handle network or other exceptions
+      debugPrint("Error fetching data: $error");
+      return false;
+    } finally {
+      dio.close();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final newActiveBranchName = ref.watch(activeBranchProvider).toString();
-    if (newActiveBranchName.isNotEmpty) {
+    if (newActiveBranchName.isNotEmpty &&
+        newActiveBranchName != _activeBranchName) {
       _storage.write(key: "active_branch_name", value: newActiveBranchName);
-      setState(() {});
-    }
+      setState(() {
+        _activeBranchName = newActiveBranchName;
+      });
+    } else {}
 
-    return FutureBuilder(
-      future: _getBranches(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: Text('Please wait its loading...'));
-        } else {
-          return SizedBox(
-            height: 50,
-            child: ListView.separated(
-              padding: const EdgeInsets.only(left: 5),
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: _branches.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final branchName = _branches[index];
-                return OvalButton(
-                  activeBranchName: _activeBranchName,
-                  branchName: branchName,
-                );
-              },
-            ),
-          );
-        }
-      },
+    return Column(
+      children: [
+        FutureBuilder(
+          future: _getBranches(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return SizedBox(
+                height: 50,
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(left: 5),
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemCount: _branches.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final branchName = _branches[index];
+                    return OvalButton(
+                      activeBranchName: _activeBranchName,
+                      branchName: branchName,
+                    );
+                  },
+                ),
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        FutureBuilder(
+          future: _getProducts(true),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Expanded(
+                child: SmartRefresher(
+                  controller: _refreshController,
+                  enablePullDown: false,
+                  enablePullUp: true,
+                  onRefresh: () async {
+                    final status = await _getProducts(false);
+                    if (status) {
+                      _refreshController.refreshCompleted();
+                    } else {
+                      _refreshController.refreshFailed();
+                    }
+                  },
+                  onLoading: () async {
+                    final status = await _getProducts(true);
+                    if (status) {
+                      _refreshController.loadComplete();
+                    } else {
+                      _refreshController.loadNoData();
+                    }
+                  },
+                  child: _products.isEmpty
+                      ? const Center(child: Text("No Products"))
+                      : ListView.separated(
+                          padding: const EdgeInsets.all(8),
+                          itemBuilder: (context, index) {
+                            final product = _products[index];
+                            return Product(product: product);
+                          },
+                          separatorBuilder: (context, index) => const Divider(),
+                          itemCount: _products.length),
+                ),
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        )
+      ],
     );
   }
 }
 
-class ListOfProducts extends StatefulWidget {
-  const ListOfProducts({super.key});
-
-  @override
-  State<ListOfProducts> createState() => _ListOfProductsState();
-}
-
-class _ListOfProductsState extends State<ListOfProducts> {
-  List<ProductModel> _products = [];
-
-  final RefreshController _refreshController = RefreshController();
-
-  Future _fetchData() async {}
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: SmartRefresher(
-        controller: _refreshController,
-        enablePullDown: false,
-        enablePullUp: true,
-        onRefresh: () async {
-          final status = await _fetchData();
-          if (status) {
-            _refreshController.refreshCompleted();
-          } else {
-            _refreshController.refreshFailed();
-          }
-        },
-        onLoading: () async {
-          final status = await _fetchData();
-          if (status) {
-            _refreshController.loadComplete();
-          } else {
-            _refreshController.loadNoData();
-          }
-        },
-        child: _products.isEmpty
-            ? const Center(child: Text("No Products"))
-            : ListView.separated(
-                padding: const EdgeInsets.all(8),
-                itemBuilder: (context, index) {
-                  final product = _products[index];
-                  return Product(product: product);
-                },
-                separatorBuilder: (context, index) => const Divider(),
-                itemCount: _products.length),
-      ),
-    );
-  }
-}
+// class ProductsBranchHorizontalList extends ConsumerStatefulWidget {
+//   const ProductsBranchHorizontalList({super.key});
+//
+//   @override
+//   ConsumerState<ProductsBranchHorizontalList> createState() =>
+//       _ProductsBranchHorizontalListState();
+// }
+//
+// class _ProductsBranchHorizontalListState
+//     extends ConsumerState<ProductsBranchHorizontalList> {
+//   var _activeBranchName = "";
+//
+//   // var _activeBranchUuid = "";
+//   List<dynamic> _branches = [];
+//
+//   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+//
+//   Map<String, String> branchNameToUuidMap = {};
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _getBranches();
+//   }
+//
+//   Future<void> _getBranches() async {
+//     // _activeBranchUuid = (await _storage.read(key: "active_branch_uuid"))!;
+//     _activeBranchName = (await _storage.read(key: "active_branch_name"))!;
+//     var localBranches = (await _storage.read(key: "branch_list"))!;
+//     _branches = jsonDecode(localBranches);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final newActiveBranchName = ref.watch(activeBranchProvider).toString();
+//     if (newActiveBranchName.isNotEmpty) {
+//       _storage.write(key: "active_branch_name", value: newActiveBranchName);
+//       // _activeBranchUuid = _storage.read(key: newActiveBranchName).toString();
+//       // _storage.write(key: "active_branch_uuid", value: _activeBranchUuid);
+//       setState(() {});
+//     }
+//
+//     return;
+//   }
+// }
+//
+// class ListOfProducts extends ConsumerStatefulWidget {
+//   const ListOfProducts({super.key});
+//
+//   @override
+//   ConsumerState<ListOfProducts> createState() => _ListOfProductsState();
+// }
+//
+// class _ListOfProductsState extends ConsumerState<ListOfProducts> {
+//   List<ProductModel> _products = [];
+//   var activeBranchUuid = "";
+//   var nextToken = "";
+//   var accessToken = "";
+//   int limit = 7;
+//
+//   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+//
+//   final RefreshController _refreshController = RefreshController();
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _fetchData(true);
+//   }
+//
+//   // Future _fetchData(bool refresh) async {
+//   //   activeBranchUuid = (await _storage.read(key: "active_branch_uuid"))!;
+//   //   accessToken = (await _storage.read(key: "access_token"))!;
+//   //   if (refresh) {
+//   //     _products.clear();
+//   //     nextToken = "";
+//   //   } else {
+//   //     nextToken = await _storage.read(key: "next_token") ?? "";
+//   //   }
+//   //   var dio = Dio();
+//   //   var headers = {
+//   //     'Cache-Control': 'true',
+//   //     'Authorization': 'Bearer $accessToken',
+//   //   };
+//   //   try {
+//   //     var uri =
+//   //         '${ApiEndpoints.baseurl}/api/product/list?bid=$activeBranchUuid&limit=$limit&token=$nextToken';
+//   //     print(uri);
+//   //     var response = await dio.request(
+//   //       uri,
+//   //       options: Options(
+//   //         method: 'GET',
+//   //         headers: headers,
+//   //       ),
+//   //     );
+//   //     dio.close();
+//   //     if (response.statusCode == 200) {
+//   //       var records = response.data["data"] as List;
+//   //       _refreshController.loadComplete();
+//   //       if (records.isEmpty) {
+//   //         return true;
+//   //       }
+//   //       _storage.write(key: "next_token", value: response.data["next_token"]);
+//   //       List<ProductModel> products =
+//   //           records.map((record) => ProductModel.fromJson(record)).toList();
+//   //       _products.addAll(products);
+//   //       setState(() {});
+//   //       return true;
+//   //     } else {
+//   //       // Handle error scenario
+//   //       debugPrint("Error fetching data: ${response.statusCode}");
+//   //       return false;
+//   //     }
+//   //   } catch (error) {
+//   //     // Handle network or other exceptions
+//   //     debugPrint("Error fetching data: $error");
+//   //     return false;
+//   //   } finally {
+//   //     dio.close();
+//   //   }
+//   // }
+//
+//   Future _fetchData(bool refresh) async {}
+//
+//   @override
+// Widget build(BuildContext context) {
+//   return;
+// }
+// }

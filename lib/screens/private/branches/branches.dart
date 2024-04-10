@@ -66,7 +66,7 @@ class _BranchesScreenState extends State<BranchesScreen> {
                 return Branch(
                   widget.storage,
                   branch: branch,
-                  isActive: _activeBranch == branch.uuid,
+                  // isActive: _activeBranch == branch.uuid,
                 );
               },
               separatorBuilder: (context, index) => const Divider(),
