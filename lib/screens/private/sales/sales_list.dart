@@ -9,18 +9,20 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:tipot/custom_widgets/branches_oval_button.dart';
 import 'package:tipot/custom_widgets/products_tile.dart';
+import 'package:tipot/custom_widgets/sales_tile.dart';
 import 'package:tipot/models/products_model.dart';
+import 'package:tipot/models/sales_model.dart';
 import 'package:tipot/providers/active_branch_providers.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
-class ProductsListPage extends ConsumerStatefulWidget {
-  const ProductsListPage({super.key});
+class SalesListPage extends ConsumerStatefulWidget {
+  const SalesListPage({super.key});
 
   @override
-  ConsumerState<ProductsListPage> createState() => _ProductsListState();
+  ConsumerState<SalesListPage> createState() => _SalesListState();
 }
 
-class _ProductsListState extends ConsumerState<ProductsListPage> {
+class _SalesListState extends ConsumerState<SalesListPage> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final RefreshController _refreshController = RefreshController();
 
@@ -30,7 +32,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
   List<dynamic> _branches = [];
   var nextToken = "";
   int limit = 10;
-  List<ProductModel> _products = [];
+  List<SalesModel> _sales = [];
 
   @override
   void initState() {
@@ -44,10 +46,10 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
     _branches = jsonDecode(localBranches);
   }
 
-  Future _getProducts(bool newBranch) async {
+  Future _getSales(bool newBranch) async {
     await Future.delayed(const Duration(seconds: 1));
     if (newBranch) {
-      _products.clear();
+      _sales.clear();
       nextToken = "";
     }
     _accessToken = (await _storage.read(key: "access_token"))!;
@@ -60,7 +62,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
     };
     try {
       var uri =
-          '${ApiEndpoints.baseurl}/api/product/list?bid=$_activeBranchUuid&limit=$limit&token=$nextToken';
+          '${ApiEndpoints.baseurl}/api/sales/list?bid=$_activeBranchUuid&limit=$limit&token=$nextToken';
       print(uri);
       var response = await dio.request(
         uri,
@@ -77,10 +79,9 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
           return true;
         }
         _storage.write(key: "next_token", value: response.data["next_token"]);
-        List<ProductModel> products =
-            records.map((record) => ProductModel.fromJson(record)).toList();
-        _products.addAll(products);
-        // debugPrint(products[0].branchUuid);
+        List<SalesModel> sales =
+            records.map((record) => SalesModel.fromJson(record)).toList();
+        _sales.addAll(sales);
         return true;
       } else {
         // Handle error scenario
@@ -136,7 +137,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
         ),
         const SizedBox(height: 10),
         FutureBuilder(
-          future: _getProducts(true),
+          future: _getSales(true),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return Expanded(
@@ -145,7 +146,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
                   enablePullDown: false,
                   enablePullUp: true,
                   onRefresh: () async {
-                    final status = await _getProducts(false);
+                    final status = await _getSales(false);
                     if (status) {
                       _refreshController.refreshCompleted();
                     } else {
@@ -153,23 +154,23 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
                     }
                   },
                   onLoading: () async {
-                    final status = await _getProducts(true);
+                    final status = await _getSales(true);
                     if (status) {
                       _refreshController.loadComplete();
                     } else {
                       _refreshController.loadNoData();
                     }
                   },
-                  child: _products.isEmpty
+                  child: _sales.isEmpty
                       ? const Center(child: Text("No Products"))
                       : ListView.separated(
                           padding: const EdgeInsets.all(8),
                           itemBuilder: (context, index) {
-                            final product = _products[index];
-                            return Product(product: product);
+                            final sale = _sales[index];
+                            return Sale(sale: sale);
                           },
                           separatorBuilder: (context, index) => const Divider(),
-                          itemCount: _products.length),
+                          itemCount: _sales.length),
                 ),
               );
             } else {

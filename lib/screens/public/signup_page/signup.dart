@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
 class SignupPage extends StatefulWidget {
-  SignupPage(this.login, {super.key});
+  const SignupPage(this.login, {super.key});
 
-  void Function() login;
+  final void Function() login;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
