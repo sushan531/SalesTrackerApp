@@ -42,7 +42,7 @@ class _ProductsAddState extends State<ProductsAdd> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print(_products.length);
+      // print(_products.length);
       var actualBranch = branchNameToUuid[_branchName];
       _products.add(ProductModel(
           productName: _productName!,
@@ -80,7 +80,7 @@ class _ProductsAddState extends State<ProductsAdd> {
       // print(jsonObject);
       Future.delayed(const Duration(seconds: 1));
 
-      var response = await dio.request(
+      await dio.request(
         uri,
         options: Options(
           method: 'POST',

@@ -46,9 +46,6 @@ class Branch extends StatefulWidget {
 }
 
 class _BranchState extends State<Branch> {
-  void _setActiveBranchUuid(String? uuid) {
-    widget.storage.write(key: "active_branch_uuid", value: uuid);
-  }
 
   @override
   Widget build(BuildContext context) {
