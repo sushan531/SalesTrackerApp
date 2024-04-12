@@ -37,6 +37,8 @@ class _SalesAddState extends State<SalesAdd> {
   List<dynamic> _branchList = [];
   List<dynamic> _productList = [];
   Map<String, String> branchNameToUuid = {};
+
+  // This will not have any branches that has no products
   Map<String, dynamic> branchNameToProducts = {};
 
   @override
@@ -48,7 +50,6 @@ class _SalesAddState extends State<SalesAdd> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print(_sales.length);
       var actualBranch = branchNameToUuid[_branchName];
       _sales.add(SalesModel(
         productName: _productName!,
@@ -169,9 +170,9 @@ class _SalesAddState extends State<SalesAdd> {
                       return DropdownMenuItem(value: item, child: Text(item));
                     }).toList(),
                     onChanged: (value) {
-                      _branchName = value.toString();
                       setState(() {
-                        _productList = branchNameToProducts[_branchName];
+                        _branchName = value.toString();
+                        _productList = branchNameToProducts[_branchName] ?? [];
                       }); // Update state to trigger rebuild
                     },
                   ),
