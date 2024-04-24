@@ -4,9 +4,14 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:path_provider/path_provider.dart';
 class ImageReader extends StatefulWidget {
-  const ImageReader({super.key, File? selectedImage });
+  final Function(String) updateProductImage;
+
+  const ImageReader({super.key, File? selectedImage, required this.updateProductImage,
+
+
+
+  });
 
   @override
   State<ImageReader> createState() => _ImageReaderState();
@@ -18,10 +23,9 @@ class _ImageReaderState extends State<ImageReader> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => selectImage(context),
-      child: const Text("Select Image"),
-
+    return IconButton(
+      onPressed: () =>  selectImage(context),
+      icon: const Icon(Icons.add),
     );
   }
 
@@ -118,41 +122,42 @@ class _ImageReaderState extends State<ImageReader> {
 
       String base64Image = base64Encode(resizedImage as List<int>);
       print('Base64 Image: $base64Image');
-      Uint8List decodedBytes = base64Decode(base64Image);
+      Uint8List decodedBytes = base64Decode(base64Image as String);
       print('Decoded Bytes: $decodedBytes');
+
 
       setState(() {
         _imageBytes = decodedBytes;
+
       });
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => ImageDisplay(
-        selectedImageBytes: _imageBytes,
-      ),
-    ),
+    widget.updateProductImage(base64Image);
 
-    );
+
+    Navigator.pop(context);
+
+
+
     }
-
   }
 
 
 
-class ImageDisplay extends StatelessWidget {
-  final Uint8List? selectedImageBytes;
-  const ImageDisplay({Key? key, required this.selectedImageBytes}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    final decodedImage = Image.memory(selectedImageBytes!);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Image Display'),
-      ),
-      body: Center(
-        child: selectedImageBytes == null
-            ?const Text('No image selected')
-            : decodedImage,
-      ),
-    );
-  }
-}
+// class ImageDisplay extends StatelessWidget {
+//   final Uint8List? selectedImageBytes;
+//   const ImageDisplay({Key? key, required this.selectedImageBytes}) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     final decodedImage = Image.memory(selectedImageBytes!);
+//
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Image Display'),
+//       ),
+//       body: Center(
+//         child: selectedImageBytes == null
+//             ?const Text('No image selected')
+//             : decodedImage,
+//       ),
+//     );
+//   }
+// }
