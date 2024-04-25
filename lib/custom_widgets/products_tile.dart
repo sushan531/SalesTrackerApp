@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:tipot/models/products_model.dart';
 
@@ -5,9 +8,14 @@ class Product extends StatelessWidget {
   final ProductModel product;
 
   const Product({Key? key, required this.product}) : super(key: key);
+  
 
   @override
   Widget build(BuildContext context) {
+    final decodedImage = product.productImage;
+    Uint8List decodedBytes = base64Decode(decodedImage as String);
+
+
     // Access properties using dot notation (assuming Product class)
     return Container(
       decoration: BoxDecoration(
@@ -19,7 +27,8 @@ class Product extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        leading: const Icon(Icons.shopping_bag),
+        leading:  product.productImage == null
+         ? const Icon(Icons.shopping_bag) :  Image.memory(decodedBytes),
         title: Text(product.productName),
         subtitle: Text(
           'Selling Price: \$${product.sellingPrice} - \nQuantity: ${product.remainingQuantity} ${product.measurementUnit}',

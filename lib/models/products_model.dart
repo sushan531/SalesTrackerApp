@@ -29,6 +29,7 @@ class ProductModel {
       'RemainingQuantity': remainingQuantity,
       'BranchUuid': branchUuid,
       'MeasurementUnit': measurementUnit,
+      'ProductImage': productImage,
     };
   }
 
