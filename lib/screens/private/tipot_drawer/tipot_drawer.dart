@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tipot/screens/private/branches/branches.dart';
 import 'package:tipot/screens/private/products/products.dart';
+import 'package:tipot/screens/private/sales/sales.dart';
 
 class HeaderDrawer extends StatefulWidget {
   const HeaderDrawer({super.key});
@@ -76,6 +76,15 @@ class _DrawerListState extends State<DrawerList> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const ProductsScreen()));
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.add_shopping_cart),
+          title: const Text("Sales"),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const SalesScreen()));
           },
         ),
       ],

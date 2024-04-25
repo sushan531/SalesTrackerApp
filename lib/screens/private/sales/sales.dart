@@ -2,20 +2,20 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/models/products_model.dart';
-import 'package:tipot/screens/private/products/products_add.dart';
-import 'package:tipot/screens/private/products/products_list.dart';
+import 'package:tipot/screens/private/sales/sales_add.dart';
+import 'package:tipot/screens/private/sales/sales_list.dart';
 import 'package:tipot/screens/private/tipot_drawer/tipot_drawer.dart';
 
-class ProductsScreen extends StatefulWidget {
-  const ProductsScreen({super.key});
+class SalesScreen extends StatefulWidget {
+  const SalesScreen({super.key});
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
-  State<ProductsScreen> createState() => _ProductsScreenState();
+  State<SalesScreen> createState() => _SalesScreenState();
 }
 
-class _ProductsScreenState extends State<ProductsScreen> {
+class _SalesScreenState extends State<SalesScreen> {
   List<ProductModel> products = [];
   int _page = 2;
 
@@ -34,9 +34,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         );
       case 1:
-        return ProductsAdd();
+        return const SalesAdd();
       case 2:
-        return const ProductsListPage();
+        return const SalesListPage();
       default:
         throw Exception('Invalid ActiveScreen value');
     }
@@ -45,9 +45,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: TipotDrawer(),
+      drawer: const TipotDrawer(),
       appBar: AppBar(
-        title: const Text('Products',
+        title: const Text('Sales',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),

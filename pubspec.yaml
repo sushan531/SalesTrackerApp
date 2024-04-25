@@ -38,7 +38,7 @@ dependencies:
 
   http: ^0.13.4
   get: ^4.6.5
-  shared_preferences: ^2.0.15
+  shared_preferences: ^2.2.3
   email_validator: '^2.1.16'
   flutter_multiselect: ^1.0.0
   dio: ^5.4.2+1
@@ -46,6 +46,8 @@ dependencies:
   pull_to_refresh_flutter3: ^2.0.2
   curved_navigation_bar: ^1.0.3
   jwt_decoder: ^2.0.1
+  flutter_riverpod: ^2.5.1
+  delayed_widget: ^1.1.2
   image_picker: ^1.0.8
   flutter_image_compress: ^2.2.0
 

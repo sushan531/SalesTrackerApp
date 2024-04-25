@@ -50,9 +50,7 @@ class _BranchesAddState extends State<BranchesAdd> {
         var data = json.encode(
             {"BranchName": branch.branchName, "OrganizationID": _orgId});
         var uri = '${ApiEndpoints.baseurl}/api/admin/add-branch';
-        print(uri);
-        print(data);
-        var response = await dio.request(
+        await dio.request(
           uri,
           options: Options(
             method: 'POST',

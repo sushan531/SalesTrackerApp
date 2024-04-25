@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/models/branch_model.dart';
-import 'package:tipot/screens/private/branches/branches.dart';
 
 class BranchMini extends StatelessWidget {
   final BranchModel branch;
@@ -35,20 +34,17 @@ class Branch extends StatefulWidget {
   final BranchModel branch;
 
   const Branch(this.storage,
-      {Key? key, required this.branch, required this.isActive})
+      {Key? key, required this.branch})
       : super(key: key);
 
   final FlutterSecureStorage storage;
-  final bool isActive;
+  // final bool isActive;
 
   @override
   State<Branch> createState() => _BranchState();
 }
 
 class _BranchState extends State<Branch> {
-  void _setActiveBranchUuid(String? uuid) {
-    widget.storage.write(key: "active_branch_uuid", value: uuid);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,21 +64,21 @@ class _BranchState extends State<Branch> {
         subtitle: Text(
           'BranchId: ${widget.branch.uuid}',
         ),
-        trailing: TextButton.icon(
-          icon: widget.isActive
-              ? const Icon(Icons.insert_emoticon_rounded)
-              : const Icon(Icons.insert_emoticon_outlined),
-          onPressed: () {
-            _setActiveBranchUuid(widget.branch.uuid);
-          },
-          style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              textStyle: const TextStyle(color: Colors.greenAccent),
-              backgroundColor: Colors.white),
-          label:
-              widget.isActive ? const Text("Active") : const Text("Inactive"),
-        ),
+        // trailing: TextButton.icon(
+        //   icon: widget.isActive
+        //       ? const Icon(Icons.insert_emoticon_rounded)
+        //       : const Icon(Icons.insert_emoticon_outlined),
+        //   onPressed: () {
+        //     _setActiveBranchUuid(widget.branch.uuid);
+        //   },
+        //   style: ElevatedButton.styleFrom(
+        //       shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(30)),
+        //       textStyle: const TextStyle(color: Colors.greenAccent),
+        //       backgroundColor: Colors.white),
+        //   label:
+        //       widget.isActive ? const Text("Active") : const Text("Inactive"),
+        // ),
       ),
     );
   }
