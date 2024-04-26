@@ -12,9 +12,13 @@ class Product extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final decodedImage = product.productImage;
-    Uint8List decodedBytes = base64Decode(decodedImage as String);
-
+    Uint8List? decodedBytes;
+    try {
+      final decodedImage = product.productImage;
+      decodedBytes = base64Decode(decodedImage as String);
+    } catch (e) {
+      product.productImage = null;
+    }
 
     // Access properties using dot notation (assuming Product class)
     return Container(
@@ -28,7 +32,7 @@ class Product extends StatelessWidget {
       ),
       child: ListTile(
         leading:  product.productImage == null
-         ? const Icon(Icons.shopping_bag) :  Image.memory(decodedBytes),
+         ? const Icon(Icons.shopping_bag) :  Image.memory(decodedBytes!),
         title: Text(product.productName),
         subtitle: Text(
           'Selling Price: \$${product.sellingPrice} - \nQuantity: ${product.remainingQuantity} ${product.measurementUnit}',

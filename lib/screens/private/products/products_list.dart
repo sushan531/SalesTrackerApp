@@ -47,6 +47,8 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
     if (newBranch) {
       _products.clear();
       nextToken = "";
+    } else {
+      nextToken = (await _storage.read(key: "next_token"))!;
     }
     _accessToken = (await _storage.read(key: "access_token"))!;
     _activeBranchUuid = (await _storage.read(key: _activeBranchName))!;
@@ -78,7 +80,6 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
         List<ProductModel> products =
             records.map((record) => ProductModel.fromJson(record)).toList();
         _products.addAll(products);
-        // debugPrint(products[0].branchUuid);
         return true;
       } else {
         // Handle error scenario
@@ -104,11 +105,12 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
         _activeBranchName = newActiveBranchName;
       });
     } else {}
-
+    var productStat = _getProducts(true);
+    var branchStat = _getBranches();
     return Column(
       children: [
         FutureBuilder(
-          future: _getBranches(),
+          future: branchStat,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return SizedBox(
@@ -134,7 +136,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
         ),
         const SizedBox(height: 10),
         FutureBuilder(
-          future: _getProducts(true),
+          future: productStat,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return Expanded(
@@ -143,7 +145,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
                   enablePullDown: false,
                   enablePullUp: true,
                   onRefresh: () async {
-                    final status = await _getProducts(false);
+                    final status = await _getProducts(true);
                     if (status) {
                       _refreshController.refreshCompleted();
                     } else {
@@ -151,7 +153,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
                     }
                   },
                   onLoading: () async {
-                    final status = await _getProducts(true);
+                    final status = await _getProducts(false);
                     if (status) {
                       _refreshController.loadComplete();
                     } else {

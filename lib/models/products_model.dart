@@ -1,7 +1,7 @@
 class ProductModel {
   final int? productId;
   final String productName;
-  final String? productImage; // Make productImage nullable
+  String? productImage; // Make productImage nullable
   final String description;
   final double sellingPrice;
   final int remainingQuantity;
