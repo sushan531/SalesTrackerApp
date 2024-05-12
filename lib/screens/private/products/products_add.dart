@@ -8,6 +8,8 @@ import 'package:tipot/models/products_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 import 'package:tipot/custom_widgets/image_reader.dart';
 
+import '../../../models/products_model.dart';
+
 var measurementUnits = ["kg", "dozen", "pcs", "meters", "lbs"];
 
 class ProductsAdd extends StatefulWidget {
@@ -252,7 +254,7 @@ class _ProductsAddState extends State<ProductsAdd> {
                   Row(
                     children: [
                       Expanded(
-                        flex: 4,
+                        flex: 5,
                         child: DropdownButtonFormField(
                           onSaved: (value) {
                             _branchName = value.toString();
@@ -269,14 +271,17 @@ class _ProductsAddState extends State<ProductsAdd> {
                         ),
                       ),
                       const SizedBox(width: 5.0),
-                      const Expanded(
-                        flex: 1,
-                        child: Text("Upload Product Image"),
-                      ),
+
                       Expanded(
-                          child: ImageReader(
+                        flex: 2,
+
+                            child:
+                          ImageReader(
                         updateProductImage: updateProductImage,
-                      )),
+                            
+                            ),
+                      )
+
                     ],
                   ),
                   const SizedBox(height: 10.0),

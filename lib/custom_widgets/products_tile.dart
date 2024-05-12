@@ -31,8 +31,13 @@ class Product extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        leading:  product.productImage == null
-         ? const Icon(Icons.shopping_bag) :  Image.memory(decodedBytes!),
+        leading:  Container(
+          width: 50,
+          height: 50,
+          child:  product.productImage!.isEmpty
+              ? const Icon(Icons.shopping_bag) :  Image.memory(decodedBytes!),
+
+        ),
         title: Text(product.productName),
         subtitle: Text(
           'Selling Price: \$${product.sellingPrice} - \nQuantity: ${product.remainingQuantity} ${product.measurementUnit}',

@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
+import '../models/products_model.dart';
+
 class ImageReader extends StatefulWidget {
   final Function(String) updateProductImage;
 
   const ImageReader({
-    super.key,
+    Key?key,
     File? selectedImage,
     required this.updateProductImage,
-  });
+  }): super(key: key);
+
 
   @override
   State<ImageReader> createState() => _ImageReaderState();
@@ -24,9 +27,38 @@ class _ImageReaderState extends State<ImageReader> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => selectImage(context),
-      icon: const Icon(Icons.add),
+    return Container(
+
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black),
+        borderRadius: BorderRadius.circular(5.0),
+
+      ),
+      child: TextButton(
+        onPressed: () => selectImage(context), child: Row(children:[
+          _imageBytes == null ?
+          Text("Product\nImage", style: TextStyle(color: Colors.black54),)
+          :
+
+          Container(
+            height: 45,
+              width: 50,
+
+            child:_imageBytes != null
+                ? Image.memory(_imageBytes!, fit: BoxFit.cover)
+                : Text("...",),
+
+          ),
+
+
+
+
+
+        SizedBox(width: 15,),
+        Icon( Icons.add_a_photo_outlined),
+      ],),
+
+      ),
     );
   }
 
@@ -128,8 +160,10 @@ class _ImageReaderState extends State<ImageReader> {
     setState(() {
       _imageBytes = decodedBytes;
     });
+
     widget.updateProductImage(base64Image);
 
     Navigator.pop(context);
+    return _imageBytes;
   }
 }
