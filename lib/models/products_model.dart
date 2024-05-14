@@ -1,7 +1,7 @@
 class ProductModel {
   final int? productId;
   final String productName;
-  String? productImage; // Make productImage nullable
+  String productImage; // Make productImage nullable
   final String description;
   final double sellingPrice;
   final int remainingQuantity;
@@ -12,7 +12,7 @@ class ProductModel {
   ProductModel({
     this.productId,
     required this.productName,
-    this.productImage,
+    required this.productImage,
     required this.description,
     required this.sellingPrice,
     required this.remainingQuantity,

@@ -17,7 +17,7 @@ class Product extends StatelessWidget {
       final decodedImage = product.productImage;
       decodedBytes = base64Decode(decodedImage as String);
     } catch (e) {
-      product.productImage = null;
+      product.productImage = "";
     }
 
     // Access properties using dot notation (assuming Product class)

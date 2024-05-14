@@ -69,12 +69,12 @@ class _SalesListState extends ConsumerState<SalesListPage> {
       );
       dio.close();
       if (response.statusCode == 200) {
-        var records = response.data["data"] as List;
+        var records = response.data["response"]["data"] as List;
         _refreshController.loadComplete();
         if (records.isEmpty) {
           return true;
         }
-        _storage.write(key: "next_token", value: response.data["next_token"]);
+        _storage.write(key: "next_token", value: response.data["response"]["next_token"]);
         List<SalesModel> sales =
             records.map((record) => SalesModel.fromJson(record)).toList();
         _sales.addAll(sales);

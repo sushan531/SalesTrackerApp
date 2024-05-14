@@ -26,14 +26,14 @@ Future<List<ProductModel>> fetchProductList(
 
     if (response.statusCode == 200) {
       final data = response.data as Map<String, dynamic>;
-      final dataMap = data['data'];
+      final dataMap = data["response"]['data'];
       if (dataMap != null) {
-        final productList = (data['data'] as List)
+        final productList = (data["response"]['data'] as List)
             .map((product) =>
                 ProductModel.fromJson(product as Map<String, dynamic>))
             .toList();
         dio.close();
-        final nextToken = data['next_token'] as String?;
+        final nextToken = data["response"]['next_token'] as String?;
         _storage.write(key: "next_token", value: nextToken);
         return productList; // Return both list and nextToken
       } else {
