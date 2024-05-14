@@ -50,10 +50,16 @@ Future<List<ProductModel>> fetchProductList(
   return [];
 }
 
-Future<Map<String, String>> getParameters() async {
+Future<Map<String, String>> getParameters(bool refresh) async {
+  String nextToken;
+  if (refresh == true) {
+    nextToken = "";
+  } else {
+    nextToken = await _storage.read(key: "next_token") ?? "";
+  }
   final activeBranchName = await _storage.read(key: "active_branch_name");
-  final activeBranchUuid = await _storage.read(key: activeBranchName.toString());
-  final nextToken = await _storage.read(key: "next_token") ?? "";
+  final activeBranchUuid =
+      await _storage.read(key: activeBranchName.toString());
   final accessToken = (await _storage.read(key: "access_token"))!;
 
   return {
@@ -77,8 +83,8 @@ Future<List<String>> getBranches() async {
   }
 }
 
-Future<Map<String, Object?>> fetchData() async {
-  Map<String, String> params = await getParameters();
+Future<Map<String, Object?>> fetchData(bool refresh) async {
+  Map<String, String> params = await getParameters(refresh);
   List<ProductModel> productLists = await fetchProductList(
       activeBranchUuid: params["activeBranchUuid"].toString(),
       limit: 10,

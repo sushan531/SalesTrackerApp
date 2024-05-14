@@ -17,11 +17,9 @@ class ProductsListPage extends ConsumerStatefulWidget {
 class _ProductsListState extends ConsumerState<ProductsListPage> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
-
+  bool refresh = true;
   var _activeBranchName = "";
   List<String> _branches = [];
-  var nextToken = "";
-  int limit = 10;
   List<ProductModel> _products = [];
   bool branchChanged = false;
   bool _isLoading = false;
@@ -34,11 +32,12 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
           !_isLoading) {
-        _prepareData();
+        _prepareData(false);
       }
     });
     _getBranches();
-    _prepareData();
+    _prepareData(refresh);
+    refresh = false;
   }
 
   void _getBranches() async {
@@ -51,17 +50,15 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
     super.dispose();
   }
 
-  void _prepareData() async {
+  void _prepareData(bool refresh) async {
     setState(() {
       _isLoading = true;
     });
-    // _getBranches();
-    Map<String, Object?> response = await fetchData();
+    Map<String, Object?> response = await fetchData(refresh);
     if (branchChanged == true && response["prod_list"] != []) {
       _products = response["prod_list"] as List<ProductModel>;
     } else {
       _products.addAll(response["prod_list"] as List<ProductModel>);
-      debugPrint("Am here now");
     }
     _activeBranchName = response["active_branch_name"] as String;
     setState(() {
@@ -80,7 +77,7 @@ class _ProductsListState extends ConsumerState<ProductsListPage> {
       _products.clear();
       setState(() {
         _activeBranchName = newActiveBranchName;
-        _prepareData();
+        _prepareData(true);
       });
     }
     return Column(
