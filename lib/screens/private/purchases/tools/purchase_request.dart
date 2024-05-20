@@ -3,17 +3,17 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/models/products_model.dart';
+import 'package:tipot/models/purchases_model.dart';
 import 'package:tipot/rest_api/commons.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
 const FlutterSecureStorage _storage = FlutterSecureStorage();
 
-Future<List<ProductModel>> fetchProductList(
+Future<List<PurchaseModel>> fetchPurchaseList(
     {required String activeBranchUuid,
-    required int limit,
-    required nextToken,
-    required accessToken}) async {
+      required int limit,
+      required nextToken,
+      required accessToken}) async {
   final dio = Dio(); // Create a new Dio instance for cleaner separation
   var headers = {
     'Cache-Control': 'true',
@@ -21,7 +21,7 @@ Future<List<ProductModel>> fetchProductList(
   };
 
   final uri =
-      '${ApiEndpoints.baseurl}/api/product/list?bid=$activeBranchUuid&limit=$limit&token=$nextToken';
+      '${ApiEndpoints.baseurl}/api/purchase/list?bid=$activeBranchUuid&limit=$limit&token=$nextToken';
   try {
     final response = await dio.get(uri, options: Options(headers: headers));
 
@@ -29,14 +29,14 @@ Future<List<ProductModel>> fetchProductList(
       final data = response.data as Map<String, dynamic>;
       final dataMap = data["response"]['data'];
       if (dataMap != null) {
-        final productList = (data["response"]['data'] as List)
-            .map((product) =>
-                ProductModel.fromJson(product as Map<String, dynamic>))
+        final purchaseList = (data["response"]['data'] as List)
+            .map((purchase) =>
+            PurchaseModel.fromJson(purchase as Map<String, dynamic>))
             .toList();
         dio.close();
         final nextToken = data["response"]['next_token'] as String?;
         _storage.write(key: "next_token", value: nextToken);
-        return productList; // Return both list and nextToken
+        return purchaseList; // Return both list and nextToken
       } else {
         return [];
       }
@@ -54,13 +54,13 @@ Future<List<ProductModel>> fetchProductList(
 
 Future<Map<String, Object?>> fetchData(bool refresh) async {
   Map<String, String> params = await getParameters(refresh);
-  List<ProductModel> productLists = await fetchProductList(
+  List<PurchaseModel> purchaseLists = await fetchPurchaseList(
       activeBranchUuid: params["activeBranchUuid"].toString(),
       limit: 10,
       nextToken: params["nextToken"].toString(),
       accessToken: params["accessToken"].toString());
   return {
-    "prod_list": productLists,
+    "purchase_list": purchaseLists,
     "active_branch_name": params["activeBranchName"]
   };
 }

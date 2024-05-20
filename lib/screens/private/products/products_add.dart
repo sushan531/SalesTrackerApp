@@ -271,17 +271,12 @@ class _ProductsAddState extends State<ProductsAdd> {
                         ),
                       ),
                       const SizedBox(width: 5.0),
-
                       Expanded(
                         flex: 2,
-
-                            child:
-                          ImageReader(
-                        updateProductImage: updateProductImage,
-                            
-                            ),
+                        child: ImageReader(
+                          updateProductImage: updateProductImage,
+                        ),
                       )
-
                     ],
                   ),
                   const SizedBox(height: 10.0),

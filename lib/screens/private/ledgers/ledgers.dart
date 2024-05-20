@@ -1,22 +1,22 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/models/products_model.dart';
-import 'package:tipot/screens/private/products/products_add.dart';
-import 'package:tipot/screens/private/products/products_list.dart';
+import 'package:tipot/models/ledgers_model.dart';
+import 'package:tipot/screens/private/ledgers/ledgers_add.dart';
+import 'package:tipot/screens/private/ledgers/ledgers_list.dart';
 import 'package:tipot/screens/private/tipot_drawer/tipot_drawer.dart';
 
-class ProductsScreen extends StatefulWidget {
-  const ProductsScreen({super.key});
+class LedgersScreen extends StatefulWidget {
+  const LedgersScreen({super.key});
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
-  State<ProductsScreen> createState() => _ProductsScreenState();
+  State<LedgersScreen> createState() => _LedgersScreenState();
 }
 
-class _ProductsScreenState extends State<ProductsScreen> {
-  List<ProductModel> products = [];
+class _LedgersScreenState extends State<LedgersScreen> {
+  List<LedgerModel> ledgers = [];
   int _page = 2;
 
   @override
@@ -34,9 +34,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         );
       case 1:
-        return const ProductsAdd();
+        return const LedgersAdd();
       case 2:
-        return const ProductsListPage();
+        return const LedgerListPage();
       default:
         throw Exception('Invalid ActiveScreen value');
     }
@@ -45,9 +45,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer:const TipotDrawer(),
+      drawer: const TipotDrawer(),
       appBar: AppBar(
-        title: const Text('Products',
+        title: const Text('Ledgers',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),

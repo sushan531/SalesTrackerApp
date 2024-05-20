@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tipot/screens/private/branches/branches.dart';
+import 'package:tipot/screens/private/ledgers/ledgers.dart';
 import 'package:tipot/screens/private/products/products.dart';
+import 'package:tipot/screens/private/purchases/purchases.dart';
 import 'package:tipot/screens/private/sales/sales.dart';
 
 class HeaderDrawer extends StatefulWidget {
@@ -79,12 +81,32 @@ class _DrawerListState extends State<DrawerList> {
           },
         ),
         ListTile(
+          leading: const Icon(Icons.input_outlined),
+          title: const Text("Purchases"),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const PurchasesScreen()));
+          },
+        ),
+        ListTile(
           leading: const Icon(Icons.add_shopping_cart),
           title: const Text("Sales"),
           onTap: () {
             Navigator.pop(context);
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const SalesScreen()));
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.account_balance_sharp),
+          title: const Text("Ledger"),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const LedgersScreen()));
           },
         ),
       ],
@@ -105,7 +127,7 @@ class _TipotDrawerState extends State<TipotDrawer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width*0.5,
+      width: MediaQuery.of(context).size.width * 0.5,
       child: const Drawer(
         child: SingleChildScrollView(
           child: Column(

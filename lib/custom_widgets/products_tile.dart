@@ -8,7 +8,6 @@ class Product extends StatelessWidget {
   final ProductModel product;
 
   const Product({Key? key, required this.product}) : super(key: key);
-  
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +30,12 @@ class Product extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        leading:  Container(
+        leading: SizedBox(
           width: 50,
           height: 50,
-          child:  product.productImage!.isEmpty
-              ? const Icon(Icons.shopping_bag) :  Image.memory(decodedBytes!),
-
+          child: product.productImage!.isEmpty
+              ? const Icon(Icons.shopping_bag)
+              : Image.memory(decodedBytes!),
         ),
         title: Text(product.productName),
         subtitle: Text(
