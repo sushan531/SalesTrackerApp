@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tipot/screens/private/branches/branches.dart';
 import 'package:tipot/screens/private/ledgers/ledgers.dart';
+import 'package:tipot/screens/private/partners/partners.dart';
 import 'package:tipot/screens/private/products/products.dart';
 import 'package:tipot/screens/private/purchases/purchases.dart';
 import 'package:tipot/screens/private/sales/sales.dart';
@@ -98,6 +99,17 @@ class _DrawerListState extends State<DrawerList> {
             Navigator.pop(context);
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const SalesScreen()));
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.person_outline_outlined),
+          title: const Text("Partners"),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const PartnersScreen()));
           },
         ),
         ListTile(
