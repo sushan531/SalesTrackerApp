@@ -31,7 +31,7 @@ class _PurchaseListPageState extends ConsumerState<PurchaseListPage> {
     branchChanged = false;
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent &&
+              _scrollController.position.maxScrollExtent &&
           !_isLoading) {
         _prepareData(false);
       }
@@ -61,13 +61,11 @@ class _PurchaseListPageState extends ConsumerState<PurchaseListPage> {
     });
   }
 
-
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/custom_widgets/sales_tile.dart';
 import 'package:tipot/models/sales_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/sales/tools/sales_request.dart';
 
 var measurementUnits = ["kg", "dozen", "pcs", "meters", "lbs"];
 
@@ -39,12 +40,6 @@ class _SalesAddState extends State<SalesAdd> {
   // This will not have any branches that has no products
   Map<String, dynamic> branchNameToProducts = {};
 
-  @override
-  void initState() {
-    _initData();
-    super.initState();
-  }
-
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -63,33 +58,21 @@ class _SalesAddState extends State<SalesAdd> {
     }
   }
 
+  @override
+  void initState() {
+    _initData();
+    super.initState();
+  }
+
   void _initData() async {
     Future.delayed(const Duration(seconds: 1));
     String? branchesString = await storage.read(key: "branch_list");
 
     _branchList = jsonDecode(branchesString!);
-    _accessToken = _accessToken.isNotEmpty
-        ? _accessToken
-        : (await storage.read(key: "access_token")).toString();
-    var headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $_accessToken',
-    };
-    var dio = Dio();
-    var uri = '${ApiEndpoints.baseurl}/api/self/get-users-product';
-    var response = await dio.request(
-      uri,
-      options: Options(
-        method: 'GET',
-        headers: headers,
-      ),
-    );
-    if (response.statusCode == 200) {
-      branchNameToProducts = response.data["response"];
-    }
     for (var branch in _branchList) {
       branchNameToUuid[branch] = await storage.read(key: branch) as String;
     }
+    branchNameToProducts = await fetchBranchNameToProducts();
     setState(() {});
   }
 
