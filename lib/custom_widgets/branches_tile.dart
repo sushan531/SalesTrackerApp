@@ -21,7 +21,7 @@ class BranchMini extends StatelessWidget {
       ),
       child: ListTile(
         leading: const Icon(Icons.shopping_bag),
-        title: Text(branch.branchName),
+        title: Text(branch.displayName),
         subtitle: Text(
           'BranchId: ${branch.uuid}',
         ),
@@ -60,7 +60,7 @@ class _BranchState extends State<Branch> {
       ),
       child: ListTile(
         leading: const Icon(Icons.shopping_bag),
-        title: Text(widget.branch.branchName),
+        title: Text(widget.branch.displayName),
         subtitle: Text(
           'BranchId: ${widget.branch.uuid}',
         ),

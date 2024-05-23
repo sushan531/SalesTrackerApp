@@ -101,7 +101,7 @@ class _ProductsAddState extends State<ProductsAdd> {
       );
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Products uploaded successfully!')),
+          const SnackBar(content: Text('Products uploaded successfully!')),
         );
 
         setState(() {

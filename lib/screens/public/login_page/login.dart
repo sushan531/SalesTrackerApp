@@ -72,9 +72,9 @@ class _LoginPageState extends State<LoginPage> {
             .write(key: "active_branch_uuid", value: records[0]["uuid"]);
         var branchNames = [];
         for (var element in records) {
-          branchNames.add(element["branch_name"]);
+          branchNames.add(element["display_name"]);
           widget.storage
-              .write(key: element["branch_name"], value: element["uuid"]);
+              .write(key: element["display_name"], value: element["uuid"]);
         }
         widget.storage
             .write(key: "branch_list", value: jsonEncode(branchNames));

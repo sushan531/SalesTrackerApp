@@ -4,9 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/custom_widgets/branches_tile.dart';
-import 'package:tipot/custom_widgets/products_tile.dart';
 import 'package:tipot/models/branch_model.dart';
-import 'package:tipot/models/products_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 import 'package:tipot/screens/private/branches/branches.dart';
 
@@ -30,7 +28,7 @@ class _BranchesAddState extends State<BranchesAdd> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      _branches.add(BranchModel(branchName: _branchName!));
+      _branches.add(BranchModel(displayName: _branchName!));
       _formKey.currentState!.reset();
       setState(() {});
     }
@@ -38,39 +36,48 @@ class _BranchesAddState extends State<BranchesAdd> {
 
   Future<void> _upload() async {
     _accessToken = await storage.read(key: "access_token") ?? "";
-    _orgId = await storage.read(key: "organization_id") ?? "";
 
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $_accessToken',
     };
     var dio = Dio();
+    bool status = false;
     try {
       for (var branch in _branches) {
-        var data = json.encode(
-            {"BranchName": branch.branchName, "OrganizationID": _orgId});
+        var data = json.encode({"DisplayName": branch.displayName});
         var uri = '${ApiEndpoints.baseurl}/api/admin/add-branch';
-        await dio.request(
-          uri,
-          options: Options(
-            method: 'POST',
-            headers: headers,
-          ),
-          data: data,
-        );
+
+        // Send POST request with error handling
+        var response =
+            await dio.post(uri, options: Options(headers: headers), data: data);
+
+        if (response.statusCode == 200) {
+          status = true;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Branch uploaded successfully!')),
+          );
+        } else {
+          // Handle other errors
+          print("Unexpected error: ${response.statusCode}");
+        }
       }
-      setState(() {
-        _branches.clear();
-      });
     } catch (error) {
-      print("Error fetching data: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('Unable to add branch. May be it already exists.'),
+        ),
+      );
     } finally {
       dio.close();
     }
-    setState(() {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const BranchesScreen()));
-    });
+    if (status == true) {
+      setState(() {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const BranchesScreen()));
+      });
+    }
   }
 
   @override
