@@ -91,7 +91,7 @@ class _SalesAddState extends State<SalesAdd> {
       var uri = '${ApiEndpoints.baseurl}/api/sales/add';
       Future.delayed(const Duration(seconds: 1));
 
-      await dio.request(
+      var response = await dio.request(
         uri,
         options: Options(
           method: 'POST',
@@ -99,10 +99,16 @@ class _SalesAddState extends State<SalesAdd> {
         ),
         data: data,
       );
-
-      setState(() {
-        _sales.clear();
-      });
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sales uploaded successfully!')),
+        );
+        setState(() {
+          _sales.clear();
+        });
+      } else {
+        print('Server returned status code ${response.statusCode}');
+      }
     } catch (error) {
       print("Error fetching data: $error");
     } finally {

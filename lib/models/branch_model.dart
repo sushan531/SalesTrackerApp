@@ -1,13 +1,13 @@
 class BranchModel {
   final String? uuid;
-  final String branchName;
+  final String displayName;
 
-  BranchModel({this.uuid, required this.branchName});
+  BranchModel({this.uuid, required this.displayName});
 
   factory BranchModel.fromJson(Map<String, dynamic> json) {
     return BranchModel(
       uuid: json['uuid'] as String,
-      branchName: json['branch_name'] as String,
+      displayName: json['display_name'] as String,
     );
   }
 }

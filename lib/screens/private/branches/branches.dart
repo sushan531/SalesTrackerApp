@@ -103,13 +103,13 @@ class _BranchesScreenState extends State<BranchesScreen> {
               .write(key: "active_branch_uuid", value: records[0]["uuid"]);
           _activeBranch = records[0]["uuid"];
           widget.storage
-              .write(key: "active_branch_name", value: records[0]["branch_name"]);
+              .write(key: "active_branch_name", value: records[0]["display_name"]);
         }
         var branch_names = [];
         for (var element in records) {
-          branch_names.add(element["branch_name"]);
+          branch_names.add(element["display_name"]);
           widget.storage
-              .write(key: element["branch_name"], value: element["uuid"]);
+              .write(key: element["display_name"], value: element["uuid"]);
         }
         widget.storage
             .write(key: "branch_list", value: jsonEncode(branch_names));

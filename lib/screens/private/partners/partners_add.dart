@@ -88,7 +88,7 @@ class _ledgersAddState extends State<PartnersAdd> {
       );
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Partners uploaded successfully!')),
+          const SnackBar(content: Text('Partners uploaded successfully!')),
         );
 
         setState(() {
