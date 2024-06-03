@@ -22,7 +22,7 @@ Future<Map<String, dynamic>> fetchBranchNameToProducts() async {
 
     // Create an instance of Dio for making HTTP requests.
     var dio = Dio();
-    var uri = '${ApiEndpoints.baseurl}/api/self/get-users-product';
+    var uri = '${ApiEndpoints.baseurl}/api/self/get-grouped-users-product';
 
     // Make the HTTP GET request.
     var response = await dio.request(
