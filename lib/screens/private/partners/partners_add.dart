@@ -90,18 +90,17 @@ class _ledgersAddState extends State<PartnersAdd> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Partners uploaded successfully!')),
         );
-
         setState(() {
           _partners.clear();
         });
-      } else {
-        // Log the error
-        print('Server returned status code ${response.statusCode}');
       }
     } catch (error) {
-      // Log the error
-      print("Error uploading products: $error");
-    } finally {
+      setState(() {
+        _partners.clear();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to uploaded partners!')),
+      );    } finally {
       dio.close();
     }
   }
@@ -118,7 +117,7 @@ class _ledgersAddState extends State<PartnersAdd> {
                 child: SizedBox(
                     height: constraints.maxHeight / 1.5,
                     child: _partners.isEmpty
-                        ? const Center(child: Text("No purchases to upload"))
+                        ? const Center(child: Text("No partners to upload"))
                         : ListView.separated(
                             padding: const EdgeInsets.all(8),
                             itemBuilder: (context, index) {

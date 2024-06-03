@@ -28,7 +28,7 @@ class _BranchesAddState extends State<BranchesAdd> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      _branches.add(BranchModel(displayName: _branchName!));
+      _branches.add(BranchModel(branchName: _branchName!));
       _formKey.currentState!.reset();
       setState(() {});
     }
@@ -45,7 +45,7 @@ class _BranchesAddState extends State<BranchesAdd> {
     bool status = false;
     try {
       for (var branch in _branches) {
-        var data = json.encode({"DisplayName": branch.displayName});
+        var data = json.encode({"BranchName": branch.branchName});
         var uri = '${ApiEndpoints.baseurl}/api/admin/add-branch';
 
         // Send POST request with error handling
@@ -63,6 +63,9 @@ class _BranchesAddState extends State<BranchesAdd> {
         }
       }
     } catch (error) {
+      setState(() {
+        _branches.clear();
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content:

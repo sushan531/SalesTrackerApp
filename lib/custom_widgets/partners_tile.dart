@@ -26,7 +26,7 @@ class Partner extends StatelessWidget {
         ),
         title: Text(partner.partnerName),
         subtitle: Text(
-          'Partner Name: \$${partner.partnerName} - \nEmail: ${partner.email} - \nContact: ${partner.contactNumber}',
+          'Partner Name: ${partner.partnerName} - \nEmail: ${partner.email} - \nContact: ${partner.contactNumber}',
         ),
       ),
     );
