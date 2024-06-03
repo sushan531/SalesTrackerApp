@@ -68,8 +68,7 @@ class _BranchesAddState extends State<BranchesAdd> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('Unable to add branch. May be it already exists.'),
+          content: Text('Unable to add branch. May be it already exists.'),
         ),
       );
     } finally {
@@ -92,7 +91,7 @@ class _BranchesAddState extends State<BranchesAdd> {
               builder: (BuildContext context, BoxConstraints constraints) {
             return SingleChildScrollView(
               child: SizedBox(
-                  height: constraints.maxHeight / 1.5,
+                  height: constraints.maxHeight,
                   child: _branches.isEmpty
                       ? const Center(child: Text("No branches to add"))
                       : ListView.separated(
@@ -106,10 +105,11 @@ class _BranchesAddState extends State<BranchesAdd> {
             );
           }),
         ),
-        Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+        const Divider(),
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          child: Form(
+              key: _formKey,
               child: Column(
                 children: [
                   TextFormField(
@@ -149,8 +149,8 @@ class _BranchesAddState extends State<BranchesAdd> {
                         ]),
                   )
                 ],
-              ),
-            )),
+              )),
+        ),
         SizedBox(height: 20.0),
       ]),
       // bottomNavigationBar: BottomNavigationBar(

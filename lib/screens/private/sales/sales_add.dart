@@ -125,7 +125,7 @@ class _SalesAddState extends State<SalesAdd> {
               builder: (BuildContext context, BoxConstraints constraints) {
             return SingleChildScrollView(
               child: SizedBox(
-                  height: constraints.maxHeight / 1.5,
+                  height: constraints.maxHeight,
                   child: _sales.isEmpty
                       ? const Center(child: Text("No sales to upload"))
                       : ListView.separated(
@@ -139,10 +139,11 @@ class _SalesAddState extends State<SalesAdd> {
             );
           }),
         ),
-        Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+        const Divider(),
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          child: Form(
+              key: _formKey,
               child: Column(
                 children: [
                   DropdownButtonFormField(
@@ -329,8 +330,8 @@ class _SalesAddState extends State<SalesAdd> {
                         ]),
                   )
                 ],
-              ),
-            )),
+              )),
+        ),
         const SizedBox(height: 20.0),
       ]),
     );

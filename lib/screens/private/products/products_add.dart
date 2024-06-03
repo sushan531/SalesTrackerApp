@@ -128,7 +128,7 @@ class _ProductsAddState extends State<ProductsAdd> {
               builder: (BuildContext context, BoxConstraints constraints) {
             return SingleChildScrollView(
               child: SizedBox(
-                  height: constraints.maxHeight / 1.5,
+                  height: constraints.maxHeight,
                   child: _products.isEmpty
                       ? const Center(child: Text("No products to upload"))
                       : ListView.separated(
@@ -142,10 +142,11 @@ class _ProductsAddState extends State<ProductsAdd> {
             );
           }),
         ),
-        Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+        const Divider(),
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          child: Form(
+              key: _formKey,
               child: Column(
                 children: [
                   TextFormField(
@@ -298,8 +299,8 @@ class _ProductsAddState extends State<ProductsAdd> {
                         ]),
                   )
                 ],
-              ),
-            )),
+              )),
+        ),
         const SizedBox(height: 20.0),
       ]),
     );

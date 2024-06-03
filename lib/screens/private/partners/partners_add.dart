@@ -115,7 +115,7 @@ class _ledgersAddState extends State<PartnersAdd> {
                 builder: (BuildContext context, BoxConstraints constraints) {
               return SingleChildScrollView(
                 child: SizedBox(
-                    height: constraints.maxHeight / 1.5,
+                    height: constraints.maxHeight,
                     child: _partners.isEmpty
                         ? const Center(child: Text("No partners to upload"))
                         : ListView.separated(
@@ -130,10 +130,11 @@ class _ledgersAddState extends State<PartnersAdd> {
               );
             }),
           ),
-          Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+          const Divider(),
+          Container(
+            padding: const EdgeInsets.all(10.0),
+            child: Form(
+                key: _formKey,
                 child: Column(
                   children: [
                     Row(
@@ -258,8 +259,8 @@ class _ledgersAddState extends State<PartnersAdd> {
                           ]),
                     )
                   ],
-                ),
-              )),
+                )),
+          ),
           const SizedBox(height: 20.0),
         ],
       ),
