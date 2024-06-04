@@ -31,6 +31,7 @@ class _ledgersAddState extends State<LedgersAdd> {
 
   String _accessToken = "";
   List<dynamic> _branchList = [];
+  late PartnerBranchData _partnersData;
   List _partnersList = [];
   Map<String, String> branchNameToUuid = {};
 
@@ -62,7 +63,9 @@ class _ledgersAddState extends State<LedgersAdd> {
     for (var branch in _branchList) {
       branchNameToUuid[branch] = await storage.read(key: branch) as String;
     }
-    _partnersList = await fetchPartnerNames(accessToken: _accessToken);
+    _partnersData = await fetchPartnerWithBranch(
+        accessToken: _accessToken, branch_list: _branchList);
+    _partnersList = _partnersData.partnerNames;
     setState(() {});
   }
 

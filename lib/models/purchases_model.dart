@@ -29,8 +29,8 @@ class PurchaseModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'PurchaseId': purchaseId,
-      'ProductId': productId,
+      // 'PurchaseId': purchaseId,
+      // 'ProductId': productId,
       'ProductName': productName,
       'UnitPurchasePrice': unitPurchasePrice.toString(),
       'Units': units.toString(),
@@ -39,8 +39,8 @@ class PurchaseModel {
       'Comments': comments,
       'TotalCost': totalCost.toString(),
       'BranchUuid': branchUuid,
-      'UserEmail': userEmail,
-      'OrganizationId': organizationId,
+      // 'UserEmail': userEmail,
+      // 'OrganizationId': organizationId,
     };
   }
 

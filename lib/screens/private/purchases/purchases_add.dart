@@ -23,13 +23,20 @@ class _PurchasesAddState extends State<PurchasesAdd> {
   String? _supplier;
   String? _comments;
   String? _branchName;
+
   final GlobalKey<FormState> _formKey = GlobalKey();
   final List<PurchaseModel> _purchases = [];
   final storage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _productNameController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final GlobalKey _autocompleteKey = GlobalKey();
 
   String _accessToken = "";
   List<dynamic> _branchList = [];
+  late PartnerBranchData _partnersData;
+  late ProductsListData _autoCompleteProductNames;
+  List<String> productNames = ["product1", "product3", "product33"];
   List _partnersList = [];
   Map<String, String> branchNameToUuid = {};
 
@@ -48,6 +55,8 @@ class _PurchasesAddState extends State<PurchasesAdd> {
           totalCost: totalCost,
           branchUuid: actualBranch!));
       _formKey.currentState!.reset();
+      _productNameController.clear();
+      _dateController.clear();
       setState(() {});
     }
   }
@@ -65,7 +74,11 @@ class _PurchasesAddState extends State<PurchasesAdd> {
     for (var branch in _branchList) {
       branchNameToUuid[branch] = await storage.read(key: branch) as String;
     }
-    _partnersList = await fetchPartnerNames(accessToken: _accessToken);
+    _partnersData = await fetchPartnerWithBranch(
+        accessToken: _accessToken, branch_list: _branchList);
+    _autoCompleteProductNames =
+        await fetchProductNames(accessToken: _accessToken);
+    productNames = _autoCompleteProductNames.productNames;
     setState(() {});
   }
 
@@ -79,6 +92,7 @@ class _PurchasesAddState extends State<PurchasesAdd> {
     var dio = Dio();
     try {
       var data = json.encode({"Data": jsonObject});
+      print(data);
       var uri = '${ApiEndpoints.baseurl}/api/purchase/add';
       Future.delayed(const Duration(seconds: 1));
 
@@ -142,22 +156,104 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    TextFormField(
-                      onSaved: (value) {
-                        _productName = value;
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: DropdownButtonFormField(
+                            onSaved: (value) {
+                              _branchName = value.toString();
+                            },
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              label: Text("Purchase for branch"),
+                            ),
+                            items: _branchList.map((item) {
+                              return DropdownMenuItem(
+                                  value: item, child: Text(item));
+                            }).toList(),
+                            onChanged: (selected) {
+                              setState(() {
+                                _branchName = selected.toString();
+                                _partnersList = _partnersData
+                                        .branchToPartner[_branchName] ??
+                                    [];
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10.0),
+                    RawAutocomplete<String>(
+                      focusNode: _focusNode,
+                      textEditingController: _productNameController,
+                      optionsViewBuilder: (BuildContext context,
+                          AutocompleteOnSelected<String> onSelected,
+                          Iterable<String> options) {
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: Material(
+                            elevation: 4.0,
+                            child: SizedBox(
+                              height: 200.0,
+                              child: ListView.builder(
+                                padding: const EdgeInsets.all(8.0),
+                                itemCount: options.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final String option =
+                                  options.elementAt(index);
+                                  return GestureDetector(
+                                    onTap: () {
+                                      onSelected(option);
+                                    },
+                                    child: ListTile(
+                                      title: Text(option),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
                       },
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Product Name",
-                      ),
-                      validator: (value) {
-                        var trimmedValue = value!.trim();
-                        if (value.isEmpty ||
-                            trimmedValue.length <= 2 ||
-                            trimmedValue.trim().length > 50) {
-                          return "Must be between 3 and 50 characters.";
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text == '') {
+                          return const Iterable<String>.empty();
                         }
-                        return null;
+                        return productNames.where((option) {
+                          var result = option
+                              .toLowerCase()
+                              .contains(textEditingValue.text.toLowerCase());
+                          return result;
+                        });
+                      },
+                      displayStringForOption: (value) => value,
+                      fieldViewBuilder: ((context, _productNameController,
+                          focusNode, onFieldSubmitted) {
+                        return TextFormField(
+                          onSaved: (value) {
+                            _productName = value;
+                          },
+                          controller: _productNameController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Product Name",
+                          ),
+                          focusNode: focusNode,
+                          validator: (value) {
+                            var trimmedValue = value!.trim();
+                            if (value.isEmpty ||
+                                trimmedValue.length <= 2 ||
+                                trimmedValue.trim().length > 50) {
+                              return "Must be between 3 and 50 characters.";
+                            }
+                            return null;
+                          },
+                        );
+                      }),
+                      onSelected: (String selection) {
+                        _productName = selection;
                       },
                     ),
                     const SizedBox(height: 10.0),
@@ -274,28 +370,6 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                       ],
                     ),
                     const SizedBox(height: 10.0),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: DropdownButtonFormField(
-                            onSaved: (value) {
-                              _branchName = value.toString();
-                            },
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              label: Text("Product related to branch"),
-                            ),
-                            items: _branchList.map((item) {
-                              return DropdownMenuItem(
-                                  value: item, child: Text(item));
-                            }).toList(),
-                            onChanged: (selected) {},
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10.0),
                     Visibility(
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -303,6 +377,8 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                             TextButton(
                                 onPressed: () {
                                   _formKey.currentState!.reset();
+                                  _productNameController.clear();
+                                  _dateController.clear();
                                 },
                                 child: const Text("Reset")),
                             const SizedBox(width: 10.0),

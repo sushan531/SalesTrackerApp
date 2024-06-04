@@ -40,26 +40,40 @@ Future<List<String>> getBranches() async {
   }
 }
 
-Future<List> fetchPartnerNames({required String accessToken}) async {
+class ProductsListData {
+  final List<String> productNames;
+
+  ProductsListData({
+    required this.productNames,
+  });
+}
+
+Future<ProductsListData> fetchProductNames(
+    {required String accessToken}) async {
   var params = await getParameters(true);
   final dio = Dio(); // Create a new Dio instance for cleaner separation
   var headers = {
     'Cache-Control': 'true',
     'Authorization': 'Bearer ${params["accessToken"]}',
   };
-  var bid = params["activeBranchUuid"].toString();
-  final uri = '${ApiEndpoints.baseurl}/api/partner/name/list?bid=$bid';
+  List<String> productNames = [];
+
+  const uri = '${ApiEndpoints.baseurl}/api/self/list-products';
   try {
     final response = await dio.get(uri, options: Options(headers: headers));
     if (response.statusCode == 200) {
       final data = response.data as Map<String, dynamic>;
       final dataList = data["response"];
       if (dataList != null) {
-        final partnerNames = data["response"].toList();
+        final _productNames = data["response"].toList();
+        for (String product in _productNames){
+          productNames.add(product);
+        }
         dio.close();
-        return partnerNames; // Return both list and nextToken
+        return ProductsListData(
+            productNames: productNames); // Return both list and nextToken
       } else {
-        return [];
+        return ProductsListData(productNames: []);
       }
     } else {
       // Handle non-200 status codes appropriately (throw exception, log error, etc.)
@@ -69,5 +83,83 @@ Future<List> fetchPartnerNames({required String accessToken}) async {
     // Handle DioError for network or other issues
     debugPrint("Error fetching data: $error");
   }
-  return [];
+  return ProductsListData(productNames: []);
+}
+
+class PartnerBranchData {
+  final Map<String, List<String>> branchToPartner;
+  final List<String> partnerNames;
+
+  PartnerBranchData({
+    required this.branchToPartner,
+    required this.partnerNames,
+  });
+}
+
+Future<PartnerBranchData> fetchPartnerWithBranch(
+    {required String accessToken, required List branch_list}) async {
+  var params = await getParameters(true);
+  final dio = Dio(); // Create a new Dio instance for cleaner separation
+  var headers = {
+    'Cache-Control': 'true',
+    'Authorization': 'Bearer ${params["accessToken"]}',
+  };
+  const uri = '${ApiEndpoints.baseurl}/api/partner/names-with-branch';
+  List<String> partnerNames = [];
+  List<String> globalPartnerNames = [];
+  Map<String, List<String>> branchToPartner = {};
+
+  try {
+    final response = await dio.get(uri, options: Options(headers: headers));
+    if (response.statusCode == 200) {
+      final data = response.data as Map<String, dynamic>;
+      final dataList = data["response"];
+      if (dataList != null) {
+        final partnerNamesWithBranch = data["response"].toList();
+        dio.close();
+        for (var item in partnerNamesWithBranch) {
+          var branchName = item['branch_name'];
+          var partnerName = item['partner_name'];
+          partnerNames.add(partnerName);
+
+          // If branch name is not specified, add partner to all other branches
+          if (branchName.isEmpty) {
+            globalPartnerNames.add(partnerName);
+            branchToPartner.forEach((key, value) {
+              branchToPartner[key] ??= [];
+              branchToPartner[key]!.add(partnerName);
+            });
+          } else {
+            branchToPartner[branchName] ??= [];
+            branchToPartner[branchName]!.add(partnerName);
+          }
+        }
+        for (final branch in branch_list) {
+          if (!branchToPartner.containsKey(branch)) {
+            branchToPartner[branch] ??= [];
+            branchToPartner[branch]!.addAll(globalPartnerNames);
+          }
+        }
+        return PartnerBranchData(
+          branchToPartner: branchToPartner,
+          partnerNames: partnerNames,
+        );
+      } else {
+        return PartnerBranchData(
+          branchToPartner: {},
+          partnerNames: [],
+        );
+      }
+    } else {
+      // Handle non-200 status codes appropriately (throw exception, log error, etc.)
+      debugPrint("Error fetching data: ${response.statusCode}");
+    }
+  } on DioException catch (error) {
+    // Handle DioError for network or other issues
+    debugPrint("Error fetching data: $error");
+  }
+  return PartnerBranchData(
+    branchToPartner: {},
+    partnerNames: [],
+  );
 }
