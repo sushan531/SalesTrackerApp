@@ -35,14 +35,15 @@ class _BranchesAddState extends State<BranchesAdd> {
   }
 
   Future<void> _upload() async {
+    if (_branches.isEmpty) {
+      return;
+    }
     _accessToken = await storage.read(key: "access_token") ?? "";
-
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $_accessToken',
     };
     var dio = Dio();
-    bool status = false;
     try {
       for (var branch in _branches) {
         var data = json.encode({"BranchName": branch.branchName});
@@ -53,10 +54,16 @@ class _BranchesAddState extends State<BranchesAdd> {
             await dio.post(uri, options: Options(headers: headers), data: data);
 
         if (response.statusCode == 200) {
-          status = true;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Branch uploaded successfully!')),
           );
+          setState(() {
+            _branches.clear();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const BranchesScreen()),
+            );
+          });
         } else {
           // Handle other errors
           print("Unexpected error: ${response.statusCode}");
@@ -73,12 +80,6 @@ class _BranchesAddState extends State<BranchesAdd> {
       );
     } finally {
       dio.close();
-    }
-    if (status == true) {
-      setState(() {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const BranchesScreen()));
-      });
     }
   }
 

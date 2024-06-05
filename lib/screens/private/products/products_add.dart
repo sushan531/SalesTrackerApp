@@ -7,6 +7,7 @@ import 'package:tipot/custom_widgets/products_tile.dart';
 import 'package:tipot/models/products_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 import 'package:tipot/custom_widgets/image_reader.dart';
+import 'package:tipot/screens/private/products/products.dart';
 
 import '../../../models/products_model.dart';
 
@@ -79,6 +80,9 @@ class _ProductsAddState extends State<ProductsAdd> {
   }
 
   Future<void> _upload() async {
+    if (_products.isEmpty) {
+      return;
+    }
     _accessToken = (await storage.read(key: "access_token")).toString();
     var jsonObject = _products.map((product) => product.toJson()).toList();
     var headers = {
@@ -86,6 +90,7 @@ class _ProductsAddState extends State<ProductsAdd> {
       'Authorization': 'Bearer $_accessToken',
     };
     var dio = Dio();
+
     try {
       var data = json.encode({"Data": jsonObject});
       var uri = '${ApiEndpoints.baseurl}/api/product/add';
@@ -103,10 +108,15 @@ class _ProductsAddState extends State<ProductsAdd> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Products uploaded successfully!')),
         );
-
-        setState(() {
-          _products.clear();
-        });
+        setState(
+          () {
+            _products.clear();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductsScreen()),
+            );
+          },
+        );
       } else {
         // Log the error
         print('Server returned status code ${response.statusCode}');

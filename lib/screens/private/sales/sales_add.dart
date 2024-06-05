@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/custom_widgets/sales_tile.dart';
 import 'package:tipot/models/sales_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/sales/sales.dart';
 import 'package:tipot/screens/private/sales/tools/sales_request.dart';
 
 var measurementUnits = ["kg", "dozen", "pcs", "meters", "lbs"];
@@ -77,6 +78,9 @@ class _SalesAddState extends State<SalesAdd> {
   }
 
   Future<void> _upload() async {
+    if (_sales.isEmpty) {
+      return;
+    }
     _accessToken = _accessToken.isNotEmpty
         ? _accessToken
         : (await storage.read(key: "access_token")).toString();
@@ -105,6 +109,10 @@ class _SalesAddState extends State<SalesAdd> {
         );
         setState(() {
           _sales.clear();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SalesScreen()),
+          );
         });
       } else {
         print('Server returned status code ${response.statusCode}');

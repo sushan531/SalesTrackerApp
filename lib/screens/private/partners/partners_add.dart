@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/custom_widgets/partners_tile.dart';
 import 'package:tipot/models/partners_model.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/partners/partners.dart';
 
 var recordType = ["credit", "debit"];
 
@@ -65,6 +66,9 @@ class _ledgersAddState extends State<PartnersAdd> {
   }
 
   Future<void> _upload() async {
+    if (_partners.isEmpty) {
+      return;
+    }
     _accessToken = (await storage.read(key: "access_token")).toString();
     var jsonObject = _partners.map((purchase) => purchase.toJson()).toList();
     var headers = {
@@ -92,6 +96,10 @@ class _ledgersAddState extends State<PartnersAdd> {
         );
         setState(() {
           _partners.clear();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const PartnersScreen()),
+          );
         });
       }
     } catch (error) {
@@ -100,7 +108,8 @@ class _ledgersAddState extends State<PartnersAdd> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to uploaded partners!')),
-      );    } finally {
+      );
+    } finally {
       dio.close();
     }
   }

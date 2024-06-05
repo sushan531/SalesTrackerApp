@@ -7,6 +7,7 @@ import 'package:tipot/custom_widgets/purchases_tile.dart';
 import 'package:tipot/models/purchases_model.dart';
 import 'package:tipot/rest_api/commons.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/purchases/purchases.dart';
 
 class PurchasesAdd extends StatefulWidget {
   const PurchasesAdd({super.key});
@@ -83,6 +84,9 @@ class _PurchasesAddState extends State<PurchasesAdd> {
   }
 
   Future<void> _upload() async {
+    if (_purchases.isEmpty) {
+      return;
+    }
     _accessToken = (await storage.read(key: "access_token")).toString();
     var jsonObject = _purchases.map((purchase) => purchase.toJson()).toList();
     var headers = {
@@ -108,9 +112,12 @@ class _PurchasesAddState extends State<PurchasesAdd> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Purchases uploaded successfully!')),
         );
-
         setState(() {
           _purchases.clear();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const PurchasesScreen()),
+          );
         });
       } else {
         // Log the error
@@ -202,7 +209,7 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                                 itemCount: options.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   final String option =
-                                  options.elementAt(index);
+                                      options.elementAt(index);
                                   return GestureDetector(
                                     onTap: () {
                                       onSelected(option);

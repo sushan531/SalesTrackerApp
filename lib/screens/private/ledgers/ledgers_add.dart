@@ -7,6 +7,7 @@ import 'package:tipot/custom_widgets/ledgers_tile.dart';
 import 'package:tipot/models/ledgers_model.dart';
 import 'package:tipot/rest_api/commons.dart';
 import 'package:tipot/rest_api/rest_api.dart';
+import 'package:tipot/screens/private/ledgers/ledgers.dart';
 
 var recordType = ["credit", "debit"];
 
@@ -70,6 +71,9 @@ class _ledgersAddState extends State<LedgersAdd> {
   }
 
   Future<void> _upload() async {
+    if (_ledgers.isEmpty) {
+      return;
+    }
     _accessToken = (await storage.read(key: "access_token")).toString();
     var jsonObject = _ledgers.map((purchase) => purchase.toJson()).toList();
     var headers = {
@@ -95,9 +99,12 @@ class _ledgersAddState extends State<LedgersAdd> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Ledgers uploaded successfully!')),
         );
-
         setState(() {
           _ledgers.clear();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LedgersScreen()),
+          );
         });
       } else {
         // Log the error
@@ -240,7 +247,7 @@ class _ledgersAddState extends State<LedgersAdd> {
                             },
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
-                              label: Text("Product related to branch"),
+                              label: Text("Partner related to branch"),
                             ),
                             items: _branchList.map((item) {
                               return DropdownMenuItem(
