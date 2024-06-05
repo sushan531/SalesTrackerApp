@@ -30,15 +30,16 @@ class _PurchasesAddState extends State<PurchasesAdd> {
   final storage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _productNameController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  final GlobalKey _autocompleteKey = GlobalKey();
+  final TextEditingController _partnerNameController = TextEditingController();
+  final FocusNode _productFocusNode = FocusNode();
+  final FocusNode _partnerFocusNode = FocusNode();
 
   String _accessToken = "";
   List<dynamic> _branchList = [];
   late PartnerBranchData _partnersData;
   late ProductsListData _autoCompleteProductNames;
   List<String> productNames = ["product1", "product3", "product33"];
-  List _partnersList = [];
+  List<String> _partnersList = [];
   Map<String, String> branchNameToUuid = {};
 
   void _saveItem() {
@@ -57,6 +58,7 @@ class _PurchasesAddState extends State<PurchasesAdd> {
           branchUuid: actualBranch!));
       _formKey.currentState!.reset();
       _productNameController.clear();
+      _partnerNameController.clear();
       _dateController.clear();
       setState(() {});
     }
@@ -193,7 +195,7 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                     ),
                     const SizedBox(height: 10.0),
                     RawAutocomplete<String>(
-                      focusNode: _focusNode,
+                      focusNode: _productFocusNode,
                       textEditingController: _productNameController,
                       optionsViewBuilder: (BuildContext context,
                           AutocompleteOnSelected<String> onSelected,
@@ -287,22 +289,90 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                     const SizedBox(height: 10.0),
                     Row(
                       children: [
+                        // Expanded(
+                        //   child: DropdownButtonFormField(
+                        //     onSaved: (value) {
+                        //       _supplier = value.toString();
+                        //     },
+                        //     decoration: const InputDecoration(
+                        //       border: OutlineInputBorder(),
+                        //       label: Text("Supplier Name"),
+                        //     ),
+                        //     items: _partnersList.map((item) {
+                        //       return DropdownMenuItem(
+                        //           value: item, child: Text(item));
+                        //     }).toList(),
+                        //     onChanged: (selected) {},
+                        //   ),
+                        // ),
                         Expanded(
-                          child: DropdownButtonFormField(
-                            onSaved: (value) {
-                              _supplier = value.toString();
+                          child: RawAutocomplete<String>(
+                            focusNode: _partnerFocusNode,
+                            textEditingController: _partnerNameController,
+                            optionsViewBuilder: (BuildContext context,
+                                AutocompleteOnSelected<String> onSelected,
+                                Iterable<String> options) {
+                              return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Material(
+                                      elevation: 4.0,
+                                      child: SizedBox(
+                                          height: 200.0,
+                                          child: ListView.builder(
+                                              padding: const EdgeInsets.all(8.0),
+                                              itemCount: options.length,
+                                              itemBuilder: (BuildContext context,
+                                                  int index) {
+                                                final String option =
+                                                options.elementAt(index);
+                                                return GestureDetector(
+                                                    onTap: () {
+                                                      onSelected(option);
+                                                    },
+                                                    child: ListTile(
+                                                      title: Text(option),
+                                                    ));
+                                              }))));
                             },
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              label: Text("Supplier Name"),
-                            ),
-                            items: _partnersList.map((item) {
-                              return DropdownMenuItem(
-                                  value: item, child: Text(item));
-                            }).toList(),
-                            onChanged: (selected) {},
+                            optionsBuilder: (TextEditingValue textEditingValue) {
+                              if (textEditingValue.text == '') {
+                                return const Iterable<String>.empty();
+                              }
+                              return _partnersList.where((option) {
+                                var result = option
+                                    .toLowerCase()
+                                    .contains(textEditingValue.text.toLowerCase());
+                                return result;
+                              });
+                            },
+                            displayStringForOption: (value) => value,
+                            fieldViewBuilder: ((context, _partnerNameController,
+                                focusNode, onFieldSubmitted) {
+                              return TextFormField(
+                                  onSaved: (value) {
+                                    _supplier = value;
+                                  },
+                                  controller: _partnerNameController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Partner Name",
+                                  ),
+                                  focusNode: focusNode,
+                                  validator: (value) {
+                                    var trimmedValue = value!.trim();
+                                    if (trimmedValue.isEmpty ||
+                                        !_partnersList.contains(trimmedValue)) {
+                                      return "Partner name must belong to branch.";
+                                    }
+                                    return null;
+                                  });
+                            }),
+                            onSelected: (String selection) {
+                              _supplier = selection;
+                            },
                           ),
                         ),
+                        const SizedBox(width: 5.0),
                         Expanded(
                           child: TextFormField(
                             onSaved: (value) {
@@ -348,6 +418,8 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                                 return null;
                               }),
                         ),
+                        const SizedBox(width: 5.0),
+
                         Expanded(
                           child: TextFormField(
                             controller: _dateController,
@@ -385,6 +457,7 @@ class _PurchasesAddState extends State<PurchasesAdd> {
                                 onPressed: () {
                                   _formKey.currentState!.reset();
                                   _productNameController.clear();
+                                  _partnerNameController.clear();
                                   _dateController.clear();
                                 },
                                 child: const Text("Reset")),

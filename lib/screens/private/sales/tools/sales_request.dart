@@ -7,8 +7,8 @@ import 'package:tipot/rest_api/rest_api.dart';
 
 const storage = FlutterSecureStorage();
 
-Future<Map<String, dynamic>> fetchBranchNameToProducts() async {
-  Map<String, dynamic> branchNameToProducts = {};
+Future<Map<String, List<String>>> fetchBranchNameToProducts() async {
+  Map<String, List<String>> branchNameToProducts = {};
 
   try {
     // Retrieve the access token from secure storage or use the existing one.
@@ -36,7 +36,9 @@ Future<Map<String, dynamic>> fetchBranchNameToProducts() async {
     // Check if the response status code is 200 (OK).
     if (response.statusCode == 200) {
       // Parse the response data and update the map.
-      branchNameToProducts = response.data["response"];
+      branchNameToProducts = Map<String, List<String>>.from(
+          response.data["response"].map((key, value) => MapEntry(key as String, List<String>.from(value)))
+      );
     } else {
       throw Exception("Failed to load data");
     }

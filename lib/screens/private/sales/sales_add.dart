@@ -32,14 +32,16 @@ class _SalesAddState extends State<SalesAdd> {
   final List<SalesModel> _sales = [];
   final storage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _productNameController = TextEditingController();
 
   String _accessToken = "";
   List<dynamic> _branchList = [];
-  List<dynamic> _productList = [];
+  List<String> _productList = [];
   Map<String, String> branchNameToUuid = {};
 
   // This will not have any branches that has no products
-  Map<String, dynamic> branchNameToProducts = {};
+  Map<String, List<String>> branchNameToProducts = {};
 
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
@@ -55,6 +57,7 @@ class _SalesAddState extends State<SalesAdd> {
         salesPrice: double.parse(_sellingPrice!),
       ));
       _formKey.currentState!.reset();
+      _productNameController.clear();
       setState(() {});
     }
   }
@@ -168,6 +171,7 @@ class _SalesAddState extends State<SalesAdd> {
                     onChanged: (value) {
                       setState(() {
                         _branchName = value.toString();
+                        _productNameController.clear();
                         _productList = branchNameToProducts[_branchName] ?? [];
                       }); // Update state to trigger rebuild
                     },
@@ -178,19 +182,70 @@ class _SalesAddState extends State<SalesAdd> {
                   Row(
                     children: [
                       Expanded(
-                        child: DropdownButtonFormField(
-                          onSaved: (value) {
-                            _productName = value.toString();
+                        child: RawAutocomplete<String>(
+                          focusNode: _focusNode,
+                          textEditingController: _productNameController,
+                          optionsViewBuilder: (BuildContext context,
+                              AutocompleteOnSelected<String> onSelected,
+                              Iterable<String> options) {
+                            return Align(
+                                alignment: Alignment.topLeft,
+                                child: Material(
+                                    elevation: 4.0,
+                                    child: SizedBox(
+                                        height: 200.0,
+                                        child: ListView.builder(
+                                            padding: const EdgeInsets.all(8.0),
+                                            itemCount: options.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              final String option =
+                                                  options.elementAt(index);
+                                              return GestureDetector(
+                                                  onTap: () {
+                                                    onSelected(option);
+                                                  },
+                                                  child: ListTile(
+                                                    title: Text(option),
+                                                  ));
+                                            }))));
                           },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            label: Text("Product"),
-                          ),
-                          items: _productList.map((item) {
-                            return DropdownMenuItem(
-                                value: item, child: Text(item));
-                          }).toList(),
-                          onChanged: (selected) {},
+                          optionsBuilder: (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text == '') {
+                              return const Iterable<String>.empty();
+                            }
+                            return _productList.where((option) {
+                              var result = option
+                                  .toLowerCase()
+                                  .contains(textEditingValue.text.toLowerCase());
+                              return result;
+                            });
+                          },
+                          displayStringForOption: (value) => value,
+                          fieldViewBuilder: ((context, _productNameController,
+                              focusNode, onFieldSubmitted) {
+                            return TextFormField(
+                                onSaved: (value) {
+                                  _productName = value;
+                                },
+                                controller: _productNameController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: "Product Name",
+                                ),
+                                focusNode: focusNode,
+                                validator: (value) {
+                                  var trimmedValue = value!.trim();
+                                  if (trimmedValue.isEmpty ||
+                                      !_productList.contains(trimmedValue)) {
+                                    return "Product name must belong to branch.";
+                                  }
+                                  return null;
+                                });
+                          }),
+                          onSelected: (String selection) {
+                            _productName = selection;
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -327,6 +382,7 @@ class _SalesAddState extends State<SalesAdd> {
                           TextButton(
                               onPressed: () {
                                 _formKey.currentState!.reset();
+                                _productNameController.clear();
                               },
                               child: const Text("Reset")),
                           const SizedBox(width: 10.0),
