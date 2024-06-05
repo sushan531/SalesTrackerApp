@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:tipot/custom_widgets/branch_row.dart';
 import 'package:tipot/custom_widgets/branches_oval_button.dart';
 import 'package:tipot/custom_widgets/paymentReceipt_tile.dart';
 import 'package:tipot/models/paymentReceipt_model.dart';
@@ -83,24 +84,7 @@ class _PaymentReceiptListPageState extends ConsumerState<PaymentReceiptListPage>
     }
     return Column(
       children: [
-        SizedBox(
-          height: 50,
-          child: ListView.separated(
-            padding: const EdgeInsets.only(left: 5),
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: _isLoading ? _branches.length + 1 : _branches.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              if (index < _branches.length) {
-                final branchName = _branches[index];
-                return OvalButton(
-                  activeBranchName: _activeBranchName,
-                  branchName: branchName,
-                );
-              }
-            },
-          ),
-        ),
+        HorizontalBranchList(branches: _branches, isLoading: _isLoading, activeBranchName: _activeBranchName),
         const SizedBox(height: 10),
         Expanded(
           child: ListView.builder(
