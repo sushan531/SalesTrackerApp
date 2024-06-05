@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tipot/custom_widgets/branches_oval_button.dart';
-import 'package:tipot/custom_widgets/ledgers_tile.dart';
-import 'package:tipot/models/ledgers_model.dart';
+import 'package:tipot/custom_widgets/paymentReceipt_tile.dart';
+import 'package:tipot/models/paymentReceipt_model.dart';
 import 'package:tipot/providers/active_branch_providers.dart';
 import 'package:tipot/rest_api/commons.dart';
-import 'package:tipot/screens/private/ledgers/tools/ledgers_request.dart';
+import 'package:tipot/screens/private/paymentReceipt/tools/paymentReceipt_request.dart';
 
-class LedgerListPage extends ConsumerStatefulWidget {
-  const LedgerListPage({super.key});
+class PaymentReceiptListPage extends ConsumerStatefulWidget {
+  const PaymentReceiptListPage({super.key});
 
   @override
-  ConsumerState<LedgerListPage> createState() => _LedgerListPageState();
+  ConsumerState<PaymentReceiptListPage> createState() => _PaymentReceiptListPageState();
 }
 
-class _LedgerListPageState extends ConsumerState<LedgerListPage> {
+class _PaymentReceiptListPageState extends ConsumerState<PaymentReceiptListPage> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final ScrollController _scrollController = ScrollController();
   bool refresh = true;
   var _activeBranchName = "";
   List<String> _branches = [];
-  List<LedgerModel> _ledgers = [];
+  List<PaymentReceiptModel> _paymentReceipt = [];
   bool branchChanged = false;
   bool _isLoading = false;
 
@@ -51,9 +51,9 @@ class _LedgerListPageState extends ConsumerState<LedgerListPage> {
     });
     Map<String, Object?> response = await fetchData(refresh);
     if (branchChanged == true && response["purchase_list"] != []) {
-      _ledgers = response["purchase_list"] as List<LedgerModel>;
+      _paymentReceipt = response["purchase_list"] as List<PaymentReceiptModel>;
     } else {
-      _ledgers.addAll(response["purchase_list"] as List<LedgerModel>);
+      _paymentReceipt.addAll(response["purchase_list"] as List<PaymentReceiptModel>);
     }
     _activeBranchName = response["active_branch_name"] as String;
     setState(() {
@@ -75,7 +75,7 @@ class _LedgerListPageState extends ConsumerState<LedgerListPage> {
       branchChanged = true;
       _storage.write(key: "active_branch_name", value: newActiveBranchName);
       _storage.write(key: "next_token", value: "");
-      _ledgers.clear();
+      _paymentReceipt.clear();
       setState(() {
         _activeBranchName = newActiveBranchName;
         _prepareData(true);
@@ -105,11 +105,11 @@ class _LedgerListPageState extends ConsumerState<LedgerListPage> {
         Expanded(
           child: ListView.builder(
             controller: _scrollController,
-            itemCount: _isLoading ? _ledgers.length + 1 : _ledgers.length,
+            itemCount: _isLoading ? _paymentReceipt.length + 1 : _paymentReceipt.length,
             itemBuilder: (context, index) {
-              if (index < _ledgers.length) {
-                final ledger = _ledgers[index];
-                return Ledger(ledger: ledger);
+              if (index < _paymentReceipt.length) {
+                final paymentReceipt = _paymentReceipt[index];
+                return PaymentReceipt(paymentReceipt: paymentReceipt);
               } else {
                 return const Center(child: CircularProgressIndicator());
               }

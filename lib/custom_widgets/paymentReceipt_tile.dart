@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tipot/models/ledgers_model.dart';
+import 'package:tipot/models/paymentReceipt_model.dart';
 
-class Ledger extends StatelessWidget {
-  final LedgerModel ledger;
+class PaymentReceipt extends StatelessWidget {
+  final PaymentReceiptModel paymentReceipt;
 
-  const Ledger({Key? key, required this.ledger}) : super(key: key);
+  const PaymentReceipt({Key? key, required this.paymentReceipt}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,9 @@ class Ledger extends StatelessWidget {
           height: 50,
           child: Icon(Icons.shopping_bag),
         ),
-        title: Text(ledger.partnerName),
+        title: Text(paymentReceipt.partnerName),
         subtitle: Text(
-          'Created Time: \$${ledger.createdTime} - \nAmount Cost: ${ledger.amount} - \nRecord Type: ${ledger.recordType}',
+          'Created Time: \$${paymentReceipt.createdTime} - \nAmount Cost: ${paymentReceipt.amount} - \nRecord Type: ${paymentReceipt.recordType}',
         ),
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tipot/screens/private/branches/branches.dart';
-import 'package:tipot/screens/private/ledgers/ledgers.dart';
+import 'package:tipot/screens/private/paymentReceipt/paymentReceipt.dart';
 import 'package:tipot/screens/private/partners/partners.dart';
 import 'package:tipot/screens/private/products/products.dart';
 import 'package:tipot/screens/private/purchases/purchases.dart';
@@ -114,11 +114,11 @@ class _DrawerListState extends State<DrawerList> {
         ),
         ListTile(
           leading: const Icon(Icons.account_balance_sharp),
-          title: const Text("Ledger"),
+          title: const Text("PaymentReceipt"),
           onTap: () {
             Navigator.pop(context);
             Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const LedgersScreen()));
+                MaterialPageRoute(builder: (context) => const PaymentReceiptScreen()));
           },
         ),
       ],

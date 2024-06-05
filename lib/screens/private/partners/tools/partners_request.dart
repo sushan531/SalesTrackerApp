@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/models/ledgers_model.dart';
+import 'package:tipot/models/paymentReceipt_model.dart';
 import 'package:tipot/models/partners_model.dart';
 import 'package:tipot/rest_api/commons.dart';
 import 'package:tipot/rest_api/rest_api.dart';

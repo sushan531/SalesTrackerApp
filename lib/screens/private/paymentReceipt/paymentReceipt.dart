@@ -1,22 +1,21 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/models/ledgers_model.dart';
-import 'package:tipot/screens/private/ledgers/ledgers_add.dart';
-import 'package:tipot/screens/private/ledgers/ledgers_list.dart';
+import 'package:tipot/models/paymentReceipt_model.dart';
+import 'package:tipot/screens/private/paymentReceipt/paymentReceipt_add.dart';
+import 'package:tipot/screens/private/paymentReceipt/paymentReceipt_list.dart';
 import 'package:tipot/screens/private/tipot_drawer/tipot_drawer.dart';
 
-class LedgersScreen extends StatefulWidget {
-  const LedgersScreen({super.key});
+class PaymentReceiptScreen extends StatefulWidget {
+  const PaymentReceiptScreen({super.key});
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
-  State<LedgersScreen> createState() => _LedgersScreenState();
+  State<PaymentReceiptScreen> createState() => _PaymentReceiptScreenState();
 }
 
-class _LedgersScreenState extends State<LedgersScreen> {
-  List<LedgerModel> ledgers = [];
+class _PaymentReceiptScreenState extends State<PaymentReceiptScreen> {
   int _page = 2;
 
   @override
@@ -34,9 +33,9 @@ class _LedgersScreenState extends State<LedgersScreen> {
           ),
         );
       case 1:
-        return const LedgersAdd();
+        return const PaymentReceiptAdd();
       case 2:
-        return const LedgerListPage();
+        return const PaymentReceiptListPage();
       default:
         throw Exception('Invalid ActiveScreen value');
     }
@@ -47,7 +46,7 @@ class _LedgersScreenState extends State<LedgersScreen> {
     return Scaffold(
       drawer: const TipotDrawer(),
       appBar: AppBar(
-        title: const Text('Ledgers',
+        title: const Text('PaymentReceipt',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),

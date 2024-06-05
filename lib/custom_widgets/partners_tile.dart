@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tipot/models/ledgers_model.dart';
 import 'package:tipot/models/partners_model.dart';
 
 class Partner extends StatelessWidget {

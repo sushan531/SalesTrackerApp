@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/models/ledgers_model.dart';
+import 'package:tipot/models/paymentReceipt_model.dart';
 import 'package:tipot/rest_api/commons.dart';
 import 'package:tipot/rest_api/rest_api.dart';
 
 const FlutterSecureStorage _storage = FlutterSecureStorage();
 
-Future<List<LedgerModel>> fetchPartnerLegdersList(
+Future<List<PaymentReceiptModel>> fetchPartnerLegdersList(
     {required String activeBranchUuid,
     required int limit,
     required nextToken,
@@ -21,7 +21,7 @@ Future<List<LedgerModel>> fetchPartnerLegdersList(
   };
 
   final uri =
-      '${ApiEndpoints.baseurl}/api/ledger/list?bid=$activeBranchUuid&limit=$limit&token=$nextToken';
+      '${ApiEndpoints.baseurl}/api/payment-receipt/list?bid=$activeBranchUuid&limit=$limit&token=$nextToken';
   try {
     final response = await dio.get(uri, options: Options(headers: headers));
 
@@ -31,7 +31,7 @@ Future<List<LedgerModel>> fetchPartnerLegdersList(
       if (dataMap != null) {
         final purchaseList = (data["response"]['data'] as List)
             .map((purchase) =>
-                LedgerModel.fromJson(purchase as Map<String, dynamic>))
+            PaymentReceiptModel.fromJson(purchase as Map<String, dynamic>))
             .toList();
         dio.close();
         final nextToken = data["response"]['next_token'] as String?;
@@ -53,7 +53,7 @@ Future<List<LedgerModel>> fetchPartnerLegdersList(
 
 Future<Map<String, Object?>> fetchData(bool refresh) async {
   Map<String, String> params = await getParameters(refresh);
-  List<LedgerModel> purchaseLists = await fetchPartnerLegdersList(
+  List<PaymentReceiptModel> purchaseLists = await fetchPartnerLegdersList(
       activeBranchUuid: params["activeBranchUuid"].toString(),
       limit: 10,
       nextToken: params["nextToken"].toString(),

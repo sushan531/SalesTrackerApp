@@ -3,22 +3,22 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/custom_widgets/ledgers_tile.dart';
-import 'package:tipot/models/ledgers_model.dart';
+import 'package:tipot/custom_widgets/paymentReceipt_tile.dart';
+import 'package:tipot/models/paymentReceipt_model.dart';
 import 'package:tipot/rest_api/commons.dart';
 import 'package:tipot/rest_api/rest_api.dart';
-import 'package:tipot/screens/private/ledgers/ledgers.dart';
+import 'package:tipot/screens/private/paymentReceipt/paymentReceipt.dart';
 
 var recordType = ["credit", "debit"];
 
-class LedgersAdd extends StatefulWidget {
-  const LedgersAdd({super.key});
+class PaymentReceiptAdd extends StatefulWidget {
+  const PaymentReceiptAdd({super.key});
 
   @override
-  State<LedgersAdd> createState() => _ledgersAddState();
+  State<PaymentReceiptAdd> createState() => _paymentReceiptAddState();
 }
 
-class _ledgersAddState extends State<LedgersAdd> {
+class _paymentReceiptAddState extends State<PaymentReceiptAdd> {
   String? _partnerName;
   String? _recordType;
   double? _amount;
@@ -26,7 +26,7 @@ class _ledgersAddState extends State<LedgersAdd> {
   String? _createdTime;
 
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final List<LedgerModel> _ledgers = [];
+  final List<PaymentReceiptModel> _paymentReceipt = [];
   final storage = const FlutterSecureStorage();
   final TextEditingController _dateController = TextEditingController();
 
@@ -40,7 +40,7 @@ class _ledgersAddState extends State<LedgersAdd> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       var actualBranch = branchNameToUuid[_branchName];
-      _ledgers.add(LedgerModel(
+      _paymentReceipt.add(PaymentReceiptModel(
           partnerName: _partnerName!,
           recordType: _recordType!,
           amount: _amount!,
@@ -71,11 +71,11 @@ class _ledgersAddState extends State<LedgersAdd> {
   }
 
   Future<void> _upload() async {
-    if (_ledgers.isEmpty) {
+    if (_paymentReceipt.isEmpty) {
       return;
     }
     _accessToken = (await storage.read(key: "access_token")).toString();
-    var jsonObject = _ledgers.map((purchase) => purchase.toJson()).toList();
+    var jsonObject = _paymentReceipt.map((purchase) => purchase.toJson()).toList();
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $_accessToken',
@@ -84,7 +84,7 @@ class _ledgersAddState extends State<LedgersAdd> {
     print(jsonObject);
     try {
       var data = json.encode({"Data": jsonObject});
-      var uri = '${ApiEndpoints.baseurl}/api/ledger/add';
+      var uri = '${ApiEndpoints.baseurl}/api/payment-receipt/add';
       Future.delayed(const Duration(seconds: 1));
 
       var response = await dio.request(
@@ -97,13 +97,13 @@ class _ledgersAddState extends State<LedgersAdd> {
       );
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ledgers uploaded successfully!')),
+          const SnackBar(content: Text('PaymentReceipt uploaded successfully!')),
         );
         setState(() {
-          _ledgers.clear();
+          _paymentReceipt.clear();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const LedgersScreen()),
+            MaterialPageRoute(builder: (context) => const PaymentReceiptScreen()),
           );
         });
       } else {
@@ -129,17 +129,17 @@ class _ledgersAddState extends State<LedgersAdd> {
               return SingleChildScrollView(
                 child: SizedBox(
                     height: constraints.maxHeight / 1.5,
-                    child: _ledgers.isEmpty
+                    child: _paymentReceipt.isEmpty
                         ? const Center(child: Text("No purchases to upload"))
                         : ListView.separated(
                             padding: const EdgeInsets.all(8),
                             itemBuilder: (context, index) {
-                              final ledger = _ledgers[index];
-                              return Ledger(ledger: ledger);
+                              final paymentReceipt = _paymentReceipt[index];
+                              return PaymentReceipt(paymentReceipt: paymentReceipt);
                             },
                             separatorBuilder: (context, index) =>
                                 const Divider(),
-                            itemCount: _ledgers.length)),
+                            itemCount: _paymentReceipt.length)),
               );
             }),
           ),

@@ -14,10 +14,10 @@ class PartnersAdd extends StatefulWidget {
   const PartnersAdd({super.key});
 
   @override
-  State<PartnersAdd> createState() => _ledgersAddState();
+  State<PartnersAdd> createState() => _paymentReceiptAddState();
 }
 
-class _ledgersAddState extends State<PartnersAdd> {
+class _paymentReceiptAddState extends State<PartnersAdd> {
   String? _partnerName;
   String? _contactNumber;
   int? _panNumber;

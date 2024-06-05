@@ -1,5 +1,5 @@
-class LedgerModel {
-  final int? ledgerId;
+class PaymentReceiptModel {
+  final int? prId;
   final int? partnerId;
   final String partnerName;
   final String recordType;
@@ -10,8 +10,8 @@ class LedgerModel {
   final String? comments;
   final String? organizationId;
 
-  LedgerModel({
-    this.ledgerId,
+  PaymentReceiptModel({
+    this.prId,
     this.partnerId,
     required this.partnerName,
     required this.recordType,
@@ -25,7 +25,7 @@ class LedgerModel {
 
   Map<String, dynamic> toJson() {
     return {
-      // 'ledger_id': ledgerId,
+      // 'payment_receipt_id': prId,
       // 'partner_id': partnerId,
       'PartnerName': partnerName,
       'RecordType': recordType,
@@ -38,9 +38,9 @@ class LedgerModel {
     };
   }
 
-  factory LedgerModel.fromJson(Map<String, dynamic> json) {
-    return LedgerModel(
-      ledgerId: json['ledger_id'],
+  factory PaymentReceiptModel.fromJson(Map<String, dynamic> json) {
+    return PaymentReceiptModel(
+      prId: json['pr_id'],
       partnerId: json['partner_id'],
       partnerName: json['partner_name'],
       recordType: json['record_type']['String'],

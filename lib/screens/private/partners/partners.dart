@@ -1,7 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:tipot/models/ledgers_model.dart';
+import 'package:tipot/models/paymentReceipt_model.dart';
 import 'package:tipot/screens/private/partners/partners_add.dart';
 import 'package:tipot/screens/private/partners/partners_list.dart';
 import 'package:tipot/screens/private/tipot_drawer/tipot_drawer.dart';
@@ -16,7 +16,7 @@ class PartnersScreen extends StatefulWidget {
 }
 
 class _PartnersScreenState extends State<PartnersScreen> {
-  List<LedgerModel> ledgers = [];
+  List<PaymentReceiptModel> paymentReceipt = [];
   int _page = 2;
 
   @override
